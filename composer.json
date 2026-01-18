@@ -1,0 +1,49 @@
+{
+    "name": "hizech/bliss",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Hizech\\Bliss\\": "src/",
+            "App\\Controllers\\": "app/controllers/",
+            "App\\Models\\": "app/Models/",
+            "App\\Helper\\": "app/helper/",
+            "App\\Plugins\\": "app/plugins/",
+            "App\\": "app/",
+            "App\\Base\\": "app/base/",
+            "Generated\\": "generated/",
+            "Tests\\": "app/tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Yoel Trujio Vargas",
+            "email": "contact@hizech.com"
+        }
+    ],
+    "require": {
+        "symfony/http-foundation": "^7.3",
+        "twig/twig": "^3.21",
+        "symfony/yaml": "^7.3",
+        "ext-fileinfo": "*",
+        "ext-pdo": "*",
+        "ext-curl": "*",
+        "ext-pdo_sqlite": "*",
+        "symfony/process": "^7.3",
+        "ueberdosis/tiptap-php": "^2.0",
+        "symfony/rate-limiter": "^8.0",
+        "ext-zip": "*",
+        "doctrine/orm": "^3.6",
+        "symfony/cache": "^8.0",
+        "symfony/var-exporter": "^7.0",
+        "symfony/config": "^8.0"
+    },
+  "require-dev": {
+    "phpunit/phpunit": "^11.0",
+        "phpstan/phpstan": "^2.1"
+  },
+  "config": {
+    "platform": {
+      "php": "8.5.0"
+    }
+  }
+}

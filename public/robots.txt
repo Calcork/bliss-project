@@ -1,0 +1,51 @@
+# Robots.txt for Bliss Framework
+
+User-agent: *
+
+# Allow public pages
+Allow: /$
+Allow: /contact-us$
+
+# Block user panel (requires authentication)
+Disallow: /user/
+
+# Block admin panel (sensitive)
+Disallow: /admin/
+
+# Block authentication flows (no value to index)
+Disallow: /login
+Disallow: /register
+Disallow: /logout
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /activate-email
+
+# Block API endpoints
+Disallow: /api/
+
+# Block storage and system directories
+Disallow: /storage/
+Disallow: /vendor/
+Disallow: /app/
+
+# Block common sensitive files
+Disallow: /*.php$
+Disallow: /*.env
+Disallow: /*.log
+Disallow: /*.sql
+Disallow: /*.json
+Disallow: /*.yaml
+Disallow: /*.yml
+Disallow: /*.xml
+Disallow: /*.lock
+
+# Block CLI and config files
+Disallow: /cli.php
+Disallow: /composer.json
+Disallow: /composer.lock
+Disallow: /phpunit.xml
+Disallow: /CLAUDE.md
+Disallow: /README.md
+
+# Crawl-delay to be respectful
+Crawl-delay: 1

@@ -1,0 +1,21 @@
+const { chromium } = require('@playwright/test');
+(async () => {
+  console.log('Launching browser...');
+  const browser = await chromium.launch({headless: true});
+  console.log('Browser launched!');
+  const context = await browser.newContext();
+  console.log('Context created!');
+  const page = await context.newPage();
+  console.log('Page created!');
+  page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+  page.on('pageerror', error => console.log('PAGE ERROR:', error));
+  page.on('crash', () => console.log('PAGE CRASHED!'));
+  console.log('Navigating...');
+  const response = await page.goto('http://localhost/test-simple.html', {timeout: 10000, waitUntil: 'commit'});
+  console.log('Response status:', response.status());
+  console.log('Response URL:', response.url());
+  const title = await page.title();
+  console.log('Page title:', title);
+  await browser.close();
+  console.log('Test complete!');
+})();

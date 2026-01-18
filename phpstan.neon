@@ -1,0 +1,9 @@
+parameters:
+    level: 6
+    paths:
+        - src
+        - app
+    excludePaths:
+        - app/twig/*
+        - app/translations/*
+    tmpDir: storage/phpstan

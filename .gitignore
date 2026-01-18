@@ -1,0 +1,14 @@
+/env/
+/vendor/
+/.vscode/
+/composer.lock
+/package-lock.json
+/node_modules/
+/storage/
+/comments.txt
+/.idea/
+/public/css/tailwindcss.css
+/.phpunit.result.cache
+/sqlite/
+/playwright-report/
+/nul

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         cacheResult="false"
+         colors="true">
+
+    <testsuites>
+        <testsuite name="phpunit">
+            <directory>tests/Phpunit</directory>
+        </testsuite>
+        <testsuite name="browser">
+            <directory>tests/Browser</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
+
+    <extensions>
+        <bootstrap class="Symfony\Component\Panther\ServerExtension"/>
+        <bootstrap class="Symfony\Component\Panther\ServerExtension">
+            <parameter name="webServerDir" value="public"/>
+        </bootstrap>
+    </extensions>
+
+</phpunit>
