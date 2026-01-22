@@ -15,7 +15,10 @@ use Hizech\Bliss\App\Services\DbEntityManager as DbEntityManagerInterface;
 use Hizech\Bliss\App\Services\HttpRouter as HttpRouterInterface;
 use Hizech\Bliss\App\Services\Logger as LoggerInterface;
 use Hizech\Bliss\App\Services\Translator as TranslatorInterface;
-use Hizech\Bliss\Cache\StaticResourceCache;
+use Hizech\Bliss\App\Services\StaticResourceCacheInterface;
+use Hizech\Bliss\Cache\StaticResourceCache\StaticResourceCache;
+use Hizech\Bliss\Cache\StorageAdapter\Case\FileStorageAdapter;
+use Hizech\Bliss\Cache\TrackerAdapter\Case\FileTrackerAdapter;
 use Hizech\Bliss\Controller\ControllerHandler;
 use Hizech\Bliss\DoctrineWrapper\DoctrineWrapper;
 use Hizech\Bliss\Env\Env;
@@ -26,7 +29,6 @@ use Hizech\Bliss\Route\HttpMethod;
 use Hizech\Bliss\Route\Matcher\Found;
 use Hizech\Bliss\Route\RouteCollection;
 use Hizech\Bliss\Translator\SimpleTranslator;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Yaml;
 
@@ -52,7 +54,7 @@ abstract class App
      */
     private ?array $registered_services;
     /**
-     * @var array<string, StaticResourceCache>
+     * @var array<string, StaticResourceCacheInterface>
      */
     private array $cache_instances = [];
 
@@ -259,14 +261,17 @@ abstract class App
         return $request->getPathInfo();
     }
 
-    final public function createStaticResourceCache(string $namespace, string $cache_dir): StaticResourceCache
+    final public function staticResourceCacheUtility(string $cache_dir): StaticResourceCacheInterface
     {
+
         $env = $this->getEnv();
         $hot_reload = ($env['APP_DEVELOPMENT'] ?? false) === true;
 
-        $adapter = new FilesystemAdapter($namespace, 0, $cache_dir);
+        $storage = new FileStorageAdapter($cache_dir . DIRECTORY_SEPARATOR . 'storage');
+        $tracker = new FileTrackerAdapter($cache_dir . DIRECTORY_SEPARATOR . 'tracker');
 
-        return new StaticResourceCache($adapter, $hot_reload);
+        return new StaticResourceCache($hot_reload, $storage, $tracker);
+
     }
 
     final public function getLogger(): LoggerInterface
@@ -282,6 +287,24 @@ abstract class App
         return $this->logger;
     }
 
+    /**
+     * @return list<string>
+     */
+    private function getAllTranslationLocales(): array
+    {
+        $path = $this->getTranslationsPath();
+        if (!is_dir($path)) {
+            return [];
+        }
+
+        $files = glob($path . DIRECTORY_SEPARATOR . '*.yaml');
+        if ($files === false) {
+            return [];
+        }
+
+        return array_map(fn($f) => basename($f, '.yaml'), $files);
+    }
+
     private function loadTranslationFile(string $locale): string
     {
         $file_path = Util::joinPath($this->getTranslationsPath(), $locale . '.yaml');
@@ -294,15 +317,23 @@ abstract class App
         return json_encode($translations);
     }
 
-    private function getTranslationFileMtime(string $locale): int
+    private function getTranslationFileMtime(string $locale): string
     {
         $file_path = Util::joinPath($this->getTranslationsPath(), $locale . '.yaml');
 
         if (!file_exists($file_path)) {
-            return 0;
+            return '0';
         }
 
-        return filemtime($file_path);
+        return (string) filemtime($file_path);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function getAllRouteNames(): array
+    {
+        return array_keys($this->getRoutes()->all());
     }
 
     private function getRouteRegex(string $route_name): string
@@ -316,10 +347,10 @@ abstract class App
         return $route->toRegex();
     }
 
-    private function getRoutesFileMtime(string $route_name): int
+    private function getRoutesFileMtime(string $route_name): string
     {
         $routes_file = $this->getRoutesPath();
-        return file_exists($routes_file) ? filemtime($routes_file) : 0;
+        return file_exists($routes_file) ? (string) filemtime($routes_file) : '0';
     }
 
     final public function getTranslator(): TranslatorInterface
@@ -327,18 +358,23 @@ abstract class App
         if ($this->translator === null) {
 
             $cache = $this->createStaticResourceCache(
-                'translations',
                 Util::joinPath($this->getStoragePath(), 'translator', 'cache')
             );
 
-            $cache->register(
+            $cache->registerResource(
                 'translations',
-                fn(string $locale) => $this->loadTranslationFile($locale),
-                fn(string $locale) => $this->getTranslationFileMtime($locale)
+                fn(bool $all) => $all ? $this->getAllTranslationLocales() : '',
+                fn(string $locale) => $this->getTranslationFileMtime($locale),
+                fn(string $item, string $locale, string $stored_meta) =>
+                    $stored_meta === $this->getTranslationFileMtime($locale)
             );
 
             $this->cache_instances['translator'] = $cache;
-            $this->translator = new SimpleTranslator($cache, 'translations');
+            $this->translator = new SimpleTranslator(
+                $cache,
+                'translations',
+                fn(string $locale) => $this->loadTranslationFile($locale)
+            );
         }
         return $this->translator;
     }
@@ -347,20 +383,25 @@ abstract class App
     {
         if ($this->http_router === null) {
 
-            $cache = $this->createStaticResourceCache(
-                'http-routes',
+            $cache = $this->staticResourceCacheUtility(
                 Util::joinPath($this->getStoragePath(), 'http-router', 'cache')
             );
 
-            $cache->register(
+            $cache->registerResource(
                 'route-regex',
-                fn(string $route_name) => $this->getRouteRegex($route_name),
-                fn(string $route_name) => $this->getRoutesFileMtime($route_name)
+                fn(bool $all) => $all ? $this->getAllRouteNames() : '',
+                fn(string $route_name) => $this->getRoutesFileMtime($route_name),
+                fn(string $item, string $route_name, string $stored_meta) =>
+                    $stored_meta === $this->getRoutesFileMtime($route_name)
             );
 
             $this->cache_instances['http-router'] = $cache;
-            $this->http_router = new HttpRouter($this->getRoutes(), $cache, 'route-regex');
-
+            $this->http_router = new HttpRouter(
+                $this->getRoutes(),
+                $cache,
+                'route-regex',
+                fn(string $route_name) => $this->getRouteRegex($route_name)
+            );
         }
         return $this->http_router;
     }
@@ -422,7 +463,7 @@ abstract class App
     }
 
     /**
-     * @return array<string, StaticResourceCache>
+     * @return array<string, StaticResourceCacheInterface>
      */
     final public function getCacheServiceableServices(): array
     {

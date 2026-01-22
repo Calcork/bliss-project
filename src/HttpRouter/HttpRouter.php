@@ -2,7 +2,7 @@
 
 namespace Hizech\Bliss\HttpRouter;
 
-use Hizech\Bliss\Cache\StaticResourceCache;
+use Hizech\Bliss\App\Services\StaticResourceCacheInterface;
 use Hizech\Bliss\Route\HttpMethod;
 use Hizech\Bliss\Route\Matcher\Found;
 use Hizech\Bliss\Route\RouteCollection;
@@ -13,68 +13,62 @@ use Hizech\Bliss\Route\RouteCollection;
  */
 final class HttpRouter implements \Hizech\Bliss\App\Services\HttpRouter
 {
+    public const string NAME_SEP = '|';
 
-    public CONST string NAME_SEP = '|';
+    /**
+     * @var callable(string): string
+     */
+    private mixed $content_generator;
+
+    /**
+     * @param callable(string): string $content_generator
+     */
     public function __construct(
-
         private RouteCollection $routes,
-        private StaticResourceCache $cache,
-        private string $cache_key = 'route-regex',
+        private StaticResourceCacheInterface $cache,
+        private string $cache_key,
+        callable $content_generator
+    ) {
+        $this->content_generator = $content_generator;
+    }
 
-    ){}
-
-    function getRoutes() : RouteCollection
+    function getRoutes(): RouteCollection
     {
         return $this->routes;
     }
 
-    static private function normalizePath(string $path): string
+    private static function normalizePath(string $path): string
     {
-        // Drop ?query and #fragment, keep only the path part.
         $path_only = parse_url($path, PHP_URL_PATH) ?? '/';
-
-        // url decode - IMPORTANT
         $path_only = rawurldecode($path_only);
-
-        // Ensure a single leading slash; don't touch trailing slash.
         return '/' . ltrim($path_only, '/');
     }
 
-    public function dispatch(HttpMethod $method, string $path): Found | null
+    public function dispatch(HttpMethod $method, string $path): Found|null
     {
-
         $normalized_path = self::normalizePath($path);
 
         foreach ($this->routes->all() as $name => $route) {
-
-            // Check allowed method
             if (!in_array($method, $route->http_methods, true)) {
                 continue;
             }
 
-            // Regex pattern
             try {
-                $regex_pattern = $this->cache->get($this->cache_key, $name);
+                $regex_pattern = $this->cache->getCacheSmart($this->cache_key, $name);
+                if (!is_string($regex_pattern) || $regex_pattern === '') {
+                    $regex_pattern = ($this->content_generator)($name);
+                }
             } catch (\InvalidArgumentException) {
-                $regex_pattern = '';
-            }
-
-            if ($regex_pattern === '') {
-                $regex_pattern = $this->routes->all()[$name]->toRegex();
+                $regex_pattern = ($this->content_generator)($name);
             }
 
             if (preg_match($regex_pattern, $normalized_path, $matches)) {
-
                 $params = [];
 
                 foreach ($matches as $key => $value) {
-
                     if (is_string($key) && !empty($value)) {
-
-                         $params[$key] = $value;
-
+                        $params[$key] = $value;
                     }
-
                 }
 
                 return new Found($name, $params);
@@ -82,7 +76,5 @@ final class HttpRouter implements \Hizech\Bliss\App\Services\HttpRouter
         }
 
         return null;
-
     }
-
 }
