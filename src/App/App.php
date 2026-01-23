@@ -261,7 +261,7 @@ abstract class App
         return $request->getPathInfo();
     }
 
-    final public function staticResourceCacheUtility(string $cache_dir): StaticResourceCacheInterface
+    final public function createStaticResourceCacheUtility(string $cache_dir): StaticResourceCacheInterface
     {
 
         $env = $this->getEnv();
@@ -357,7 +357,7 @@ abstract class App
     {
         if ($this->translator === null) {
 
-            $cache = $this->createStaticResourceCache(
+            $cache = $this->createStaticResourceCacheUtility(
                 Util::joinPath($this->getStoragePath(), 'translator', 'cache')
             );
 
@@ -383,7 +383,7 @@ abstract class App
     {
         if ($this->http_router === null) {
 
-            $cache = $this->staticResourceCacheUtility(
+            $cache = $this->createStaticResourceCacheUtility(
                 Util::joinPath($this->getStoragePath(), 'http-router', 'cache')
             );
 
