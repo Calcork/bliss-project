@@ -2,15 +2,14 @@
 
 namespace App\Controllers\DirectController;
 
+use Hizech\Bliss\Controller\SystemcallControllerReport;
+
 class Example extends DirectController
 {
 
-    /**
-     *
-     * @return void
-     */
-    function example() : void {
+    function example() : SystemcallControllerReport {
         echo 'Hi';
+        return SystemcallControllerReport::Success();
     }
 
 }

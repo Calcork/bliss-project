@@ -2,31 +2,19 @@
 
 namespace App\Controllers\AppController\SystemCall;
 
+use Hizech\Bliss\Controller\SystemcallControllerReport;
+
 class Cache extends SystemCall
 {
-    function purgeAll(): void
+    public function purgeAll(): SystemcallControllerReport
     {
-        $caches = $this->app->getCacheServiceableServices();
-
-        foreach ($caches as $name => $cache) {
-            $item = $name === 'translator' ? 'translations' : 'route-regex';
-            $cache->deleteCacheSmart($item, null);
-            echo "Purged {$name} cache.\n";
-        }
-
-        echo 'Purged all services cache.';
+        $this->app->purgeCache();
+        return SystemcallControllerReport::Success();
     }
 
-    function rebuildAll(): void
+    public function rebuildAll(): SystemcallControllerReport
     {
-        $caches = $this->app->getCacheServiceableServices();
-
-        foreach ($caches as $name => $cache) {
-            $item = $name === 'translator' ? 'translations' : 'route-regex';
-            $cache->rebuildCacheSmart($item, null);
-            echo "Rebuilt {$name} cache.\n";
-        }
-
-        echo 'Rebuilt all services cache.';
+        $this->app->rebuildCache();
+        return SystemcallControllerReport::Success();
     }
 }

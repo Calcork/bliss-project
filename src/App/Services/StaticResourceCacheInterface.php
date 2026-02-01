@@ -10,6 +10,11 @@ namespace Hizech\Bliss\App\Services;
  */
 interface StaticResourceCacheInterface
 {
+    /**
+     * @return array<string, mixed>
+     */
+    public function getResources(): array;
+
     public function registerResource(
         string $item,
         /**

@@ -2,60 +2,44 @@
 
 namespace Hizech\Bliss\Translator;
 
-use Hizech\Bliss\App\Services\StaticResourceCacheInterface;
 use Hizech\Bliss\App\Services\Translator;
 use Hizech\Bliss\Data\Variable;
 
 class SimpleTranslator implements Translator
 {
-    /**
-     * @var callable(string): string
-     */
-    private mixed $content_generator;
 
-    /**
-     * @param callable(string): string $content_generator
-     */
-    public function __construct(
-        private StaticResourceCacheInterface $cache,
-        private string $cache_key,
-        callable $content_generator
-    ) {
-        $this->content_generator = $content_generator;
-    }
+    function __construct(
+
+        /**
+         * @var callable(string $key, string $locale) : ?string
+         */
+        private $translator_fetcher,
+        /**
+         * @var null|array<string, array<string, string>> $cache_locales_translations
+         */
+        private ?array $cache_locales_translations = null,
+
+    ) {}
 
     /**
      * @param array<string, mixed> $params
      */
     public function trans(string $key, array $params, string $locale): string
     {
-        try {
-            $json = $this->cache->getCacheSmart($this->cache_key, $locale);
-            if (!is_string($json) || $json === '') {
-                $json = ($this->content_generator)($locale);
-            }
-            $value = json_decode($json, true);
-        } catch (\InvalidArgumentException) {
-            return $key;
+
+        if(isset($this->cache_locales_translations[$locale][$key])) {
+            $translation = $this->cache_locales_translations[$locale][$key];
         }
 
-        if (!is_array($value)) {
-            return $key;
+        else{
+            $translation = ($this->translator_fetcher)($key, $locale);
         }
 
-        foreach (explode('.', $key) as $segment) {
-            if (!is_array($value) || !array_key_exists($segment, $value)) {
-                return $key;
-            }
-            $value = $value[$segment];
-        }
+        if(!isset($translation)) return '[[' . $key . ']]';
 
-        if (!is_string($value)) {
-            return $key;
-        }
-
-        $value = Variable::squareReplacePlaceholders($value, $params);
+        $value = Variable::squareReplacePlaceholders($translation, $params);
 
         return $value;
+
     }
 }

@@ -2,14 +2,17 @@
 
 namespace App\Controllers\AppController\SystemCall;
 
+use Hizech\Bliss\Controller\SystemcallControllerReport;
+
 class Help extends SystemCall
 {
-    function notFound() : void
+    function notFound() : SystemcallControllerReport
     {
         echo sprintf('The command: %s:%s was not found, please run Help:listSystemcalls to list all registered commands.', $this->section, $this->method);
+        return SystemcallControllerReport::Success();
     }
 
-    function listSystemcalls() : void {
+    function listSystemcalls() : SystemcallControllerReport {
 
         echo 'The following commands are registered for systemcall aliases:' . PHP_EOL . PHP_EOL;
 
@@ -23,6 +26,8 @@ class Help extends SystemCall
             }
 
         }
+
+        return SystemcallControllerReport::Success();
 
     }
 

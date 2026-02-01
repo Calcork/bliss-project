@@ -2,7 +2,6 @@
 
 namespace Hizech\Bliss\HttpRouter;
 
-use Hizech\Bliss\App\Services\StaticResourceCacheInterface;
 use Hizech\Bliss\Route\HttpMethod;
 use Hizech\Bliss\Route\Matcher\Found;
 use Hizech\Bliss\Route\RouteCollection;
@@ -15,21 +14,13 @@ final class HttpRouter implements \Hizech\Bliss\App\Services\HttpRouter
 {
     public const string NAME_SEP = '|';
 
-    /**
-     * @var callable(string): string
-     */
-    private mixed $content_generator;
-
-    /**
-     * @param callable(string): string $content_generator
-     */
     public function __construct(
         private RouteCollection $routes,
-        private StaticResourceCacheInterface $cache,
-        private string $cache_key,
-        callable $content_generator
+        /**
+         * @var array<string, string>|null
+         */
+        private ?array $cache_regex = null,
     ) {
-        $this->content_generator = $content_generator;
     }
 
     function getRoutes(): RouteCollection
@@ -53,14 +44,8 @@ final class HttpRouter implements \Hizech\Bliss\App\Services\HttpRouter
                 continue;
             }
 
-            try {
-                $regex_pattern = $this->cache->getCacheSmart($this->cache_key, $name);
-                if (!is_string($regex_pattern) || $regex_pattern === '') {
-                    $regex_pattern = ($this->content_generator)($name);
-                }
-            } catch (\InvalidArgumentException) {
-                $regex_pattern = ($this->content_generator)($name);
-            }
+            if(isset($this->cache_regex)) $regex_pattern = $this->cache_regex[$name];
+            else $regex_pattern = $route->toRegex();
 
             if (preg_match($regex_pattern, $normalized_path, $matches)) {
                 $params = [];

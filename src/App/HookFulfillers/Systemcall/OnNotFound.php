@@ -13,8 +13,9 @@ interface OnNotFound
      * @param string $section
      * @param string $method
      * @param array<string, bool|int|string|float|null> $arguments
+     * @param array<string, bool|int|string|float|null> $attributes
      * @return ControllerHandler
      */
-    function onNotFound(App $app, string $section, string $method, array $arguments) : ControllerHandler;
+    function onNotFound(App $app, string $section, string $method, array $arguments, array $attributes) : true|ControllerHandler;
 
 }

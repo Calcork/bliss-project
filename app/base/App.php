@@ -2,70 +2,140 @@
 
 namespace App\Base;
 
+use App\Base\HttpFulfillers\OnContestContextFulfillers\AdminKey;
+use App\Base\HttpFulfillers\OnContestContextFulfillers\NormalizeContext;
+use App\Base\HttpFulfillers\OnNotFoundFulfillers\BaseNotFound;
+use App\Base\HttpFulfillers\OnContestContextFulfillers\BaseContext as HttpBaseContext;
+use App\Base\HttpFulfillers\OnContestContextFulfillers\RedirectSlash;
+use App\Base\HttpFulfillers\OnContestControllerFulfillers\BaseController as HttpBaseController;
+use App\Base\HttpFulfillers\OnContestResponseFulfillers\BaseResponse;
+use App\Base\HttpFulfillers\OnAfterResponseSentFulfillers\BaseAfterResponseSent;
+use App\Base\SystemcallFulfillers\OnContestContextFulfillers\BaseContext as SystemcallBaseContext;
+use App\Base\SystemcallFulfillers\OnContestControllerFulfillers\BaseController as SystemcallBaseController;
+use App\Base\SystemcallFulfillers\OnAfterControllerRunFulfillers\BaseAfterControllerRun;
+
 class App extends \Hizech\Bliss\App\App
 {
+    /**
+     * @var array<string, mixed> $config
+     */
+    private array $config;
 
-    private GenericFulfillers $generic_fulfillers;
-    private HttpFulfillers $http_fulfillers;
-    private SystemcallFulfillers $systemcall_fulfillers;
+    /**
+     * @return array<string, mixed>
+     */
+    function getConfig() : array {
 
-    private function getGenericFulfillers() : GenericFulfillers
+        if(isset($this->config)) return $this->config;
+
+        else {
+
+            $config = [];
+
+            $config['migrations'] = require($this->getRootPath() . I . 'app' . I . 'config' . I . 'migrations.php');
+
+            $this->config = $config;
+            return $this->config;
+
+        }
+
+    }
+
+    public function getStorageCacheFolders(): array
     {
-        if(isset($this->generic_fulfillers)) return $this->generic_fulfillers;
-        else {
-            $this->generic_fulfillers = new GenericFulfillers();
-            return $this->generic_fulfillers;
-        }
+
+        $new_folders = [
+
+        ];
+
+        return array_merge(parent::getStorageCacheFolders(), $new_folders);
+
     }
 
-    private function getHttpFulfillers() : HttpFulfillers {
-        if(isset($this->http_fulfillers)) return $this->http_fulfillers;
-        else {
-            $this->http_fulfillers = new HttpFulfillers();
-            return $this->http_fulfillers;
-        }
+    public function getStorageFolders(): array
+    {
+        $new_folders = [
+
+        ];
+
+        return array_merge(parent::getStorageFolders(), $new_folders);
     }
 
-    private function getSystemcallFulfillers() : SystemcallFulfillers {
-        if(isset($this->systemcall_fulfillers)) return $this->systemcall_fulfillers;
-        else {
-            $this->systemcall_fulfillers = new SystemcallFulfillers();
-            return $this->systemcall_fulfillers;
-        }
-    }
 
-    protected function onContestHttpRoutesFulfillers(): array
+    protected function onHttpContestContextFulfillers(): array
     {
         $ar = [
-            'root' => $this->getGenericFulfillers(),
+            'BaseContext' => new HttpBaseContext(),
+            'RedirectSlash' => new RedirectSlash(),
+            'NormalizeContext' => new NormalizeContext(),
+            'AdminKey' => new AdminKey(),
+            'RateLimit' => new \App\Base\HttpFulfillers\OnContestContextFulfillers\RateLimit(),
         ];
-        return array_merge(parent::onContestHttpRoutesFulfillers(), $ar);
+        return array_merge(parent::onHttpContestContextFulfillers(), $ar);
     }
 
-    protected function onContestSystemcallAliasesFulfillers(): array
+    protected function onHttpContestControllerFulfillers(): array
     {
-
         $ar = [
-            'root' => $this->getGenericFulfillers(),
+            'BaseController' => new HttpBaseController(),
         ];
-        return array_merge(parent::onContestSystemcallAliasesFulfillers(), $ar);
+        return array_merge(parent::onHttpContestControllerFulfillers(), $ar);
+    }
 
+    protected function onHttpContestResponseFulfillers(): array
+    {
+        $ar = [
+            'BaseResponse' => new BaseResponse(),
+        ];
+        return array_merge(parent::onHttpContestResponseFulfillers(), $ar);
     }
 
     protected function onHttpNotFoundFulfillers(): array
     {
         $ar = [
-            'root' => $this->getHttpFulfillers(),
+            'BaseNotFound' => new BaseNotFound(),
         ];
         return array_merge(parent::onHttpNotFoundFulfillers(), $ar);
+    }
+
+    protected function onHttpAfterResponseSentFulfillers(): array
+    {
+        $ar = [
+            'BaseAfterResponseSent' => new BaseAfterResponseSent(),
+        ];
+        return array_merge(parent::onHttpAfterResponseSentFulfillers(), $ar);
+    }
+
+    protected function onSystemcallContestContextFulfillers(): array
+    {
+        $ar = [
+            'BaseContext' => new SystemcallBaseContext(),
+        ];
+        return array_merge(parent::onSystemcallContestContextFulfillers(), $ar);
+    }
+
+    protected function onSystemcallContestControllerFulfillers(): array
+    {
+        $ar = [
+            'BaseController' => new SystemcallBaseController(),
+        ];
+        return array_merge(parent::onSystemcallContestControllerFulfillers(), $ar);
     }
 
     protected function onSystemcallNotFoundFulfillers(): array
     {
         $ar = [
-            'root' => $this->getSystemcallFulfillers(),
+            'BaseNotFound' => new \App\Base\SystemcallFulfillers\OnNotFoundFulfillers\BaseNotFound(),
         ];
         return array_merge(parent::onSystemcallNotFoundFulfillers(), $ar);
+    }
+
+    protected function onSystemcallAfterControllerRunFulfillers(): array
+    {
+        $ar = [
+            'BaseAfterControllerRun' => new BaseAfterControllerRun(),
+        ];
+        return array_merge(parent::onSystemcallAfterControllerRunFulfillers(), $ar);
     }
 
 }

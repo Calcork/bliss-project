@@ -5,14 +5,16 @@
         "psr-4": {
             "Hizech\\Bliss\\": "src/",
             "App\\Controllers\\": "app/controllers/",
-            "App\\Models\\": "app/Models/",
-            "App\\Helper\\": "app/helper/",
-            "App\\Plugins\\": "app/plugins/",
-            "App\\": "app/",
+            "App\\Models\\": "app/models/",
             "App\\Base\\": "app/base/",
-            "Generated\\": "generated/",
-            "Tests\\": "app/tests/"
-        }
+            "App\\Generated\\": "app/generated/",
+            "App\\Tests\\": "app/tests/",
+            "App\\Lib\\": "app/lib/",
+            "App\\Database\\Migrations\\": "app/database/migrations/"
+        },
+      "files": [
+        "head.php"
+      ]
     },
     "authors": [
         {
@@ -32,10 +34,12 @@
         "ueberdosis/tiptap-php": "^2.0",
         "symfony/rate-limiter": "^8.0",
         "ext-zip": "*",
+        "ext-apcu": "*",
         "doctrine/orm": "^3.6",
         "symfony/cache": "^8.0",
         "symfony/var-exporter": "^7.0",
-        "symfony/config": "^8.0"
+        "symfony/config": "^8.0",
+        "doctrine/migrations": "^3.9"
     },
   "require-dev": {
     "phpunit/phpunit": "^11.0",

@@ -9,9 +9,6 @@ use Hizech\Bliss\App\HookFulfillers\Http\OnContestContext;
 use Hizech\Bliss\App\HookFulfillers\Http\OnContestController;
 use Hizech\Bliss\App\HookFulfillers\Http\OnContestResponse;
 use Hizech\Bliss\App\HookFulfillers\Http\OnNotFound;
-use Hizech\Bliss\App\HookFulfillers\OnContestHttpRoutes;
-use Hizech\Bliss\App\HookFulfillers\OnContestSystemcallAliases;
-use Hizech\Bliss\App\Services\DbEntityManager as DbEntityManagerInterface;
 use Hizech\Bliss\App\Services\HttpRouter as HttpRouterInterface;
 use Hizech\Bliss\App\Services\Logger as LoggerInterface;
 use Hizech\Bliss\App\Services\Translator as TranslatorInterface;
@@ -20,6 +17,7 @@ use Hizech\Bliss\Cache\StaticResourceCache\StaticResourceCache;
 use Hizech\Bliss\Cache\StorageAdapter\Case\FileStorageAdapter;
 use Hizech\Bliss\Cache\TrackerAdapter\Case\FileTrackerAdapter;
 use Hizech\Bliss\Controller\ControllerHandler;
+use Hizech\Bliss\Controller\SystemcallControllerReport;
 use Hizech\Bliss\DoctrineWrapper\DoctrineWrapper;
 use Hizech\Bliss\Env\Env;
 use Hizech\Bliss\HttpRouter\HttpRouter;
@@ -30,6 +28,7 @@ use Hizech\Bliss\Route\Matcher\Found;
 use Hizech\Bliss\Route\RouteCollection;
 use Hizech\Bliss\Translator\SimpleTranslator;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -49,14 +48,6 @@ abstract class App
      * @var array<string, array<string, ControllerHandler>> $systemcall_aliases
      */
     private array $systemcall_aliases;
-    /**
-     * @var array<string, string>
-     */
-    private ?array $registered_services;
-    /**
-     * @var array<string, StaticResourceCacheInterface>
-     */
-    private array $cache_instances = [];
 
     final public function __construct(
 
@@ -65,100 +56,55 @@ abstract class App
         private ?LoggerInterface $logger = null,
         private ?TranslatorInterface $translator = null,
         private ?HttpRouterInterface $http_router = null,
-        private ?DbEntityManagerInterface $db_entity_manager = null,
+        private ?DoctrineWrapper $doctrine = null,
 
     ) {
 
+
         $this->env = null;
         $this->error_handling_initialized = false;
-        $this->registered_services = null;
-        $this->routes = new RouteCollection();
-        $this->systemcall_aliases = [];
-
-        $routes = require($this->getRoutesPath());
-
-        $fulfillers = $this->onContestHttpRoutesFulfillers();
-        
-        // Hook
-        foreach($fulfillers as $name => $fulfiller) {
-
-            $this->onBeforeFulfillerExecuted($name, $fulfiller);
-            $routes = $fulfiller->onContestHttpRoutes($this, $routes);
-
-        }
-
-        $this->routes = $routes;
-
-        $systemcall_aliases = require($this->getSystemCallAliasesPath());
-
-        // Hook
-        foreach($this->onContestSystemcallAliasesFulfillers() as $name => $fulfiller) {
-
-            $this->onBeforeFulfillerExecuted($name, $fulfiller);
-
-            $systemcall_aliases = $fulfiller->onContestSystemcallAliases($this, $systemcall_aliases);
-
-        }
-
-        $this->systemcall_aliases = $systemcall_aliases;
 
     }
 
-
-    /**
-     * @return array<string, OnContestHttpRoutes>
-     */
-    protected function onContestHttpRoutesFulfillers() : array {
-        return [];
+    protected function createRoutes() : RouteCollection {
+        return require($this->getRoutesPath());
     }
 
     /**
-     * @return array<string, OnContestSystemcallAliases>
+     * @return array<string, array<string, ControllerHandler>>
      */
-    protected function onContestSystemcallAliasesFulfillers() : array {
-        return [];
+    protected function createSystemcallAliases() : array
+    {
+        return require($this->getSystemCallAliasesPath());
     }
 
-    /**
-     * @return array<string, string>
-     */
-    final public function getRegisteredServices() : array {
+    final public function getRoutes() : RouteCollection {
 
-        if(isset($this->registered_services)) {
-            return $this->registered_services;
-        }
-
+        if(isset($this->routes)) return $this->routes;
         else {
-
-            $registered_services = $this->defineRegisteredServices();
-
-            $this->registered_services = $registered_services;
-            return $this->registered_services;
-
+            $this->routes = $this->createRoutes();
+            return $this->routes;
         }
 
     }
 
     /**
-     * @return string[]
+     * @return \Hizech\Bliss\Controller\ControllerHandler[][]
      */
-    protected function defineRegisteredServices() : array {
+    final public function getSystemCallAliases() : array {
 
-        return [
-
-            'logger' => 'getLogger',
-            'translator' => 'getTranslator',
-            'http-router' => 'getHttpRouter',
-            'db-entity-manager' => 'getDbEntityManager',
-
-        ];
+        if(isset($this->systemcall_aliases)) return $this->systemcall_aliases;
+        else {
+            $this->systemcall_aliases = $this->createSystemcallAliases();
+            return $this->systemcall_aliases;
+        }
 
     }
 
     /**
      * @return array<int, string>
      */
-    final public function getStorageFolders(): array
+    public function getStorageFolders(): array
     {
         return [
 
@@ -172,10 +118,46 @@ abstract class App
 
     }
 
+    public function purgeCache() : void {
+        foreach ($this->getStorageCacheFolders() as $folder) {
+            $path = Util::joinPath($this->getStoragePath(), $folder);
+            if (!is_dir($path)) {
+                continue;
+            }
+            $files = glob($path . DIRECTORY_SEPARATOR . '*');
+            if ($files === false) {
+                continue;
+            }
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    unlink($file);
+                } elseif (is_dir($file)) {
+                    $sub_files = glob($file . DIRECTORY_SEPARATOR . '*');
+                    if ($sub_files === false) {
+                        continue;
+                    }
+                    foreach ($sub_files as $sub_file) {
+                        if (is_file($sub_file)) {
+                            unlink($sub_file);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function rebuildCache() : void {
+        $this->purgeCache();
+        $this->translator = null;
+        $this->http_router = null;
+        $this->getTranslator();
+        $this->getHttpRouter();
+    }
+
     /**
      * @return array<int, string>
      */
-    final public function getStorageCacheFolders(): array
+    public function getStorageCacheFolders(): array
     {
 
         return [
@@ -183,18 +165,6 @@ abstract class App
             'http-router/cache',
         ];
 
-    }
-
-    /**
-     * Get the default env directory based on project naming convention.
-     * Looks for a sibling folder with -env suffix.
-     * e.g., 'bliss' project has env at '../bliss-env/'
-     */
-    final public static function getDefaultEnvDir(string $root_path): string
-    {
-        $dirname = basename(rtrim($root_path, DIRECTORY_SEPARATOR));
-        $parent = dirname($root_path);
-        return Util::joinPath($parent, $dirname . '-env');
     }
 
     /**
@@ -225,11 +195,6 @@ abstract class App
         return $this->root_path . Util::pathByParts('/app', '/direct-controller-aliases.php');
     }
 
-    final public function getTemplatesPath(): string
-    {
-        return $this->root_path . Util::pathByParts('/app', '/twig');
-    }
-
     final public function getTranslationsPath(): string
     {
         return $this->root_path . Util::pathByParts('/app', '/translations');
@@ -243,7 +208,7 @@ abstract class App
     
     final public function getEnvPath(): string
     {
-        return Util::joinPath(self::getDefaultEnvDir($this->root_path), '.env-app');
+        return $this->getRootPath() . DIRECTORY_SEPARATOR . '.env';
     }
 
     /**
@@ -297,35 +262,67 @@ abstract class App
             return [];
         }
 
-        $files = glob($path . DIRECTORY_SEPARATOR . '*.yaml');
-        if ($files === false) {
+        $dirs = glob($path . DIRECTORY_SEPARATOR . '*', GLOB_ONLYDIR);
+        if ($dirs === false) {
             return [];
         }
 
-        return array_map(fn($f) => basename($f, '.yaml'), $files);
+        return array_map(fn($d) => basename($d), $dirs);
     }
 
     private function loadTranslationFile(string $locale): string
     {
-        $file_path = Util::joinPath($this->getTranslationsPath(), $locale . '.yaml');
+        $locale_dir = Util::joinPath($this->getTranslationsPath(), $locale);
 
-        if (!file_exists($file_path)) {
+        if (!is_dir($locale_dir)) {
             return '[]';
         }
 
-        $translations = Yaml::parseFile($file_path);
-        return json_encode($translations);
+        $files = glob($locale_dir . DIRECTORY_SEPARATOR . '*.yaml');
+        if ($files === false || $files === []) {
+            return '[]';
+        }
+
+        $merged = [];
+
+        foreach ($files as $file) {
+            $namespace = basename($file, '.yaml');
+            $parsed = Yaml::parseFile($file);
+
+            if (!is_array($parsed)) {
+                continue;
+            }
+
+            foreach ($parsed as $key => $value) {
+                $merged[$namespace . '.' . $key] = $value;
+            }
+        }
+
+        return json_encode($merged);
     }
 
     private function getTranslationFileMtime(string $locale): string
     {
-        $file_path = Util::joinPath($this->getTranslationsPath(), $locale . '.yaml');
+        $locale_dir = Util::joinPath($this->getTranslationsPath(), $locale);
 
-        if (!file_exists($file_path)) {
+        if (!is_dir($locale_dir)) {
             return '0';
         }
 
-        return (string) filemtime($file_path);
+        $files = glob($locale_dir . DIRECTORY_SEPARATOR . '*.yaml');
+        if ($files === false || $files === []) {
+            return '0';
+        }
+
+        $max_mtime = 0;
+        foreach ($files as $file) {
+            $mtime = filemtime($file);
+            if ($mtime !== false && $mtime > $max_mtime) {
+                $max_mtime = $mtime;
+            }
+        }
+
+        return (string) $max_mtime;
     }
 
     /**
@@ -363,17 +360,35 @@ abstract class App
 
             $cache->registerResource(
                 'translations',
-                fn(bool $all) => $all ? $this->getAllTranslationLocales() : '',
+                fn(?string $instance) => $instance === null
+                    ? $this->getAllTranslationLocales()
+                    : $this->loadTranslationFile($instance),
                 fn(string $locale) => $this->getTranslationFileMtime($locale),
                 fn(string $item, string $locale, string $stored_meta) =>
                     $stored_meta === $this->getTranslationFileMtime($locale)
             );
 
-            $this->cache_instances['translator'] = $cache;
+            $cached_translations = $cache->getCacheSmart('translations');
+            $decoded_cache = null;
+
+            if (is_array($cached_translations)) {
+                $decoded_cache = [];
+                foreach ($cached_translations as $locale => $json) {
+                    $parsed = json_decode($json, true);
+                    $decoded_cache[$locale] = is_array($parsed) ? $parsed : [];
+                }
+            }
+
             $this->translator = new SimpleTranslator(
-                $cache,
-                'translations',
-                fn(string $locale) => $this->loadTranslationFile($locale)
+                function (string $key, string $locale): ?string {
+                    $json = $this->loadTranslationFile($locale);
+                    $parsed = json_decode($json, true);
+                    if (!is_array($parsed)) {
+                        return null;
+                    }
+                    return $parsed[$key] ?? null;
+                },
+                $decoded_cache
             );
         }
         return $this->translator;
@@ -389,31 +404,32 @@ abstract class App
 
             $cache->registerResource(
                 'route-regex',
-                fn(bool $all) => $all ? $this->getAllRouteNames() : '',
+                fn(?string $instance) => $instance === null
+                    ? $this->getAllRouteNames()
+                    : $this->getRouteRegex($instance),
                 fn(string $route_name) => $this->getRoutesFileMtime($route_name),
                 fn(string $item, string $route_name, string $stored_meta) =>
                     $stored_meta === $this->getRoutesFileMtime($route_name)
             );
 
-            $this->cache_instances['http-router'] = $cache;
+            $cached_regex = $cache->getCacheSmart('route-regex');
+
             $this->http_router = new HttpRouter(
                 $this->getRoutes(),
-                $cache,
-                'route-regex',
-                fn(string $route_name) => $this->getRouteRegex($route_name)
+                is_array($cached_regex) ? $cached_regex : null
             );
         }
         return $this->http_router;
     }
 
-    final public function getDbEntityManager() :  DbEntityManagerInterface
+    final public function getDoctrine() :  DoctrineWrapper
     {
 
-        if ($this->db_entity_manager === null) {
+        if ($this->doctrine === null) {
 
             $config = ORMSetup::createAttributeMetadataConfig(
 
-                paths: [$this->getRootPath() . '/app/Models'],
+                paths: [$this->getRootPath() . '/app/models'],
                 isDevMode: $this->getEnv()['APP_DEVELOPMENT'],
                 cache: null
 
@@ -458,20 +474,8 @@ abstract class App
             return $entityManager;
         }
 
-        else return $this->db_entity_manager;
+        else return $this->getDoctrine();
 
-    }
-
-    /**
-     * @return array<string, StaticResourceCacheInterface>
-     */
-    final public function getCacheServiceableServices(): array
-    {
-        // Initialize services to ensure cache instances are created
-        $this->getTranslator();
-        $this->getHttpRouter();
-
-        return $this->cache_instances;
     }
 
     final public function doErrorHandling() : void
@@ -499,20 +503,6 @@ abstract class App
         });
 
         $this->error_handling_initialized = true;
-    }
-
-
-    final public function getRoutes(): RouteCollection
-    {
-        return $this->routes;
-    }
-
-    /**
-     * @return array<string, array<string, \Hizech\Bliss\Controller\ControllerHandler>>
-     */
-    final public function getSystemCallAliases(): array
-    {
-        return $this->systemcall_aliases;
     }
 
     /**
@@ -562,15 +552,17 @@ abstract class App
 
     final public function runHttp(Request $request) : void {
 
-        // Iteration stub
-        $r = null;
-
         // Hook
         foreach($this->onHttpContestContextFulfillers() as $name => $fulfiller) {
 
             $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
             $r = $fulfiller->onContestContext($this, $request);
+
+            if ($r instanceof Response) {
+                $r->send();
+                return;
+            }
 
             $request = $r;
 
@@ -600,11 +592,20 @@ abstract class App
 
                 $r = $fulfiller->onNotFound($this, $request);
 
-                $controller_handler = $r;
+                if($r === true) continue;
+                elseif($r instanceof Response) {
+                    $r->send();
+                    return;
+                }
+                elseif($r instanceof  ControllerHandler) {
+                    $controller_handler = $r;
+                    break;
+                }
+                else {
+                    throw new \LogicException('Impossible.');
+                }
 
             }
-
-            if(!$controller_handler instanceof ControllerHandler) return;
 
         }
 
@@ -623,6 +624,11 @@ abstract class App
             $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
             $r = $fulfiller->onContestController($this, $controller);
+
+            if ($r instanceof Response) {
+                $r->send();
+                return;
+            }
 
             $controller = $r;
 
@@ -702,22 +708,23 @@ abstract class App
 
     /**
      * @param array<string, float|int|bool|string|null> $arguments
-     * @return void
+     * @param array<string, float|int|bool|string|null> $attributes
      */
-    final public function runSystemcall(string $section, string $method, array $arguments) : void {
-
-        // Iteration stub
-        $r = null;
+    final public function runSystemcall(string $section, string $method, array $arguments, array $attributes = []) : void {
 
         // Hook
         foreach($this->onSystemcallContestContextFulfillers() as $name => $fulfiller) {
 
             $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-            $new_context = $fulfiller->onContestContext($this, $section, $method, $arguments);
-            $section = $new_context['section'];
-            $method = $new_context['method'];
-            $arguments = $new_context['arguments'];
+            $r = $fulfiller->onContestContext($this, $section, $method, $arguments, $attributes);
+
+            if($r === false) return;
+
+            $section = $r['section'];
+            $method = $r['method'];
+            $arguments = $r['arguments'];
+            $attributes = $r['attributes'];
 
         }
 
@@ -740,20 +747,27 @@ abstract class App
 
                 $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-                $r = $fulfiller->onNotFound($this, $section, $method, $arguments);
+                $r = $fulfiller->onNotFound($this, $section, $method, $arguments, $attributes);
 
-                $controller_handler = $r;
+                if($r === true) {
+                    continue;
+                }
+                elseif($r instanceof ControllerHandler) {
+                    $controller_handler = $r;
+                    break;
+                }
+                else {
+                    throw new \LogicException('Impossible.');
+                }
 
             }
-
-            if(!$controller_handler instanceof ControllerHandler) return;
 
         }
 
         /**
          * @var \Hizech\Bliss\Controller\SystemcallController $controller
          */
-        $controller = new ($controller_handler->class)($this, $section, $method, $arguments);
+        $controller = new ($controller_handler->class)($this, $section, $method, $arguments, $attributes);
 
         // Hook
         foreach($this->onSystemcallContestControllerFulfillers() as $name => $fulfiller) {
@@ -766,14 +780,19 @@ abstract class App
 
         }
 
-        $controller->{$controller_handler->method}();
+        try {
+            $result = $controller->{$controller_handler->method}();
+        }
+        catch (\Throwable $throwable) {
+            $result = SystemcallControllerReport::thrown($throwable);
+        }
 
         // Hook
         foreach($this->onSystemcallAfterControllerRunFulfillers() as $name => $fulfiller) {
 
             $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-            $fulfiller->onAfterControllerRun($this);
+            $fulfiller->onAfterControllerRun($this, $result);
 
         }
 
