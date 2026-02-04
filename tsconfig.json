@@ -8,5 +8,7 @@
         "esModuleInterop": true,
         "skipLibCheck": true
     },
-    "include": ["app/react"]
+    "include": [
+      "app/twig/react"
+    ]
 }

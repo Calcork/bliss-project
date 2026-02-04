@@ -7,7 +7,7 @@ final class Found
 {
     public function __construct(
         public readonly string $route,
-        /** @var array<string,string> */
+        /** @var array<string, string> */
         public readonly array $params
     ) {}
 }

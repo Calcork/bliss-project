@@ -11,7 +11,7 @@ readonly class SystemcallControllerReport
     )
     {}
 
-    static function Success() : self {
+    static function success() : self {
         return new self(SystemcallControllerReportCode::Success);
     }
 

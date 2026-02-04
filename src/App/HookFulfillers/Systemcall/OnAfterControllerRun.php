@@ -7,5 +7,5 @@ use Hizech\Bliss\Controller\SystemcallControllerReport;
 
 interface OnAfterControllerRun
 {
-    function onAfterControllerRun(App $app, SystemcallControllerReport $response) : void;
+    function onAfterControllerRun(SystemcallControllerReport $response) : void;
 }

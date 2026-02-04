@@ -1,0 +1,45 @@
+{% extends 'layout.twig' %}
+
+{% set app_url = app.getEnv()['APP_URL'] %}
+{% set routes = app.getRoutes().all() %}
+{% set inputs = app.getConfig()['inputs'] %}
+
+{% block title %}{{ trans('main.login.title') }}{% endblock %}
+
+
+{% block body %}
+<div class="login-page">
+
+    <div class="login-card">
+        {{ react_island('LoginForm', {
+            action: app_url ~ routes['r|login|POST'].toUri(),
+            errors: errors,
+            old_email: old_email,
+            t: {
+                title: trans('main.login.title'),
+                email: trans('main.login.email'),
+                password: trans('main.login.password'),
+                submit: trans('main.login.submit')
+            },
+            constraints: {
+                email: {
+                    pattern: inputs['email'].regex,
+                    maxlength: inputs['email'].max_length
+                },
+                password: {
+                    minlength: inputs['password'].min_length,
+                    maxlength: inputs['password'].max_length
+                }
+            },
+            register_url: app_url ~ routes['r|register|GET'].toUri(),
+            home_url: app_url,
+            forgot_password_url: app_url ~ routes['r|forgot-password|GET'].toUri(),
+            t_register: trans('main.login.register'),
+            t_home: trans('main.login.home'),
+            t_forgot_password: trans('main.login.forgot_password'),
+            success_message: success_message
+        }) }}
+    </div>
+
+</div>
+{% endblock %}

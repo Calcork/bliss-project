@@ -18,7 +18,7 @@ if (!storageDir) {
  * @see https://playwright.dev/docs/test-configuration
  */
 module.exports = defineConfig({
-    testDir: './tests/playwright',
+    testDir: './app/tests/playwright',
     outputDir: storageDir + '/playwright/playwright-results',
     fullyParallel: true,
     forbidOnly: !!process.env.CI,

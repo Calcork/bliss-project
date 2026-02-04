@@ -1,7 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./app/twig/**/*.twig"   // your BetterTwig files
+    "./app/twig/**/*.twig",
+    "./app/react/**/*.{ts,tsx}"
   ],
   theme: {
     extend: {},

@@ -11,7 +11,7 @@ ini_set('display_startup_errors', '1');
 require_once(__DIR__ . '/vendor/autoload.php');
 
 /**
- * php cli.php Controller:someMethod --is_santa_cool$
+ * php cli.php ControllerTest:someMethod --is_santa_cool$
  * php cli.php DirectController:someMethod --_type=direct
  * php cli.php sprintf --_type=callable --format="hi this is really cook"
  */
@@ -29,7 +29,7 @@ $type = (isset($special_arguments['_type'])) ? $special_arguments['_type'] : nul
 
 if ($type === 'direct') {
 
-    // Direct Controller Mode - bypasses application boot
+    // Direct ControllerTest Mode - bypasses application boot
     $dc_aliases = require(__DIR__ . MiscUtil::pathByParts('/app', '/direct-controller-aliases.php'));
     $controller_handler = $dc_aliases[$section][$method] ?? null;
 
@@ -47,7 +47,7 @@ if ($type === 'direct') {
 // Else cause we need an app instance for both
 else {
 
-    $app = new App(__DIR__);
+    $app = new App();
 
     if($type === 'callable'){
 

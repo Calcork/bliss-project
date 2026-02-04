@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html dir="{{ attributes.get('text_dir') }}" lang="{{ attributes.get('browser_locale') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover">
+    <meta name="app-url" content="{{ attributes.get('app_url') }}">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ attributes.get('app_url') }}/css/main.css">
+    <script type="module" src="{{ attributes.get('app_url') }}/js/react/main.js"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+</body>
+</html>

@@ -7,10 +7,7 @@
 
     <testsuites>
         <testsuite name="phpunit">
-            <directory>tests/Phpunit</directory>
-        </testsuite>
-        <testsuite name="browser">
-            <directory>tests/Browser</directory>
+            <directory>app/tests/Phpunit</directory>
         </testsuite>
     </testsuites>
 
@@ -20,11 +17,5 @@
         </include>
     </source>
 
-    <extensions>
-        <bootstrap class="Symfony\Component\Panther\ServerExtension"/>
-        <bootstrap class="Symfony\Component\Panther\ServerExtension">
-            <parameter name="webServerDir" value="public"/>
-        </bootstrap>
-    </extensions>
 
 </phpunit>

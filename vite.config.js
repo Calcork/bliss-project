@@ -8,7 +8,7 @@ export default defineConfig({
         outDir: 'public/js/react',
         emptyOutDir: false,
         rollupOptions: {
-            input: 'app/react/main.tsx',
+            input: 'app/twig/react/main.tsx',
             output: {
                 entryFileNames: 'main.js',
             },

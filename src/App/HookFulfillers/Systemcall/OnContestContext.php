@@ -8,7 +8,6 @@ interface OnContestContext
 {
 
     /**
-     * @param App $app
      * @param string $section
      * @param string $method
      * @param array<string, bool|int|string|float|null> $arguments
@@ -20,6 +19,6 @@ interface OnContestContext
      *      attributes: array<string, mixed>
      *  }
      */
-    function onContestContext(App $app, string $section, string $method, array $arguments, array $attributes) : array|false;
+    function onContestContext(string $section, string $method, array $arguments, array $attributes) : array|false;
 
 }

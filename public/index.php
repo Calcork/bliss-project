@@ -9,6 +9,6 @@ require_once(__DIR__ . '/../vendor/autoload.php');
 $request = Request::createFromGlobals();
 
 // Boot the application
-$app = new App(dirname(__DIR__));
+$app = new App();
 
 $app->runHttp($request);

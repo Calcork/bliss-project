@@ -1,0 +1,105 @@
+{% extends 'layout.twig' %}
+
+{% set app_url = app.getEnv()['APP_URL'] %}
+{% set routes = app.getRoutes().all() %}
+{% set inputs = app.getConfig()['inputs'] %}
+
+{% block title %}{{ trans('main.dashboard.title') }}{% endblock %}
+
+{% block body %}
+<div class="dashboard-page">
+
+    {% set nav_links = [
+        { url: app_url, label: trans('main.dashboard.home') },
+        { url: app_url ~ routes['r|logout|GET'].toUri(), label: trans('main.dashboard.logout') }
+    ] %}
+    {% include '_nav.twig' %}
+
+    <div class="dashboard-card">
+        <h1 class="dashboard-form__title">{{ trans('main.dashboard.title') }}</h1>
+
+        <div class="dashboard-form__info">
+            <span>{{ trans('main.dashboard.member_since', { date: user.getCreatedAt().format('F j, Y') }) }}</span>
+            <span>·</span>
+            {% if user.isEmailVerified() %}
+                <span class="dashboard-form__verified">{{ trans('main.dashboard.email_verified') }}</span>
+            {% else %}
+                <span class="dashboard-form__unverified">{{ trans('main.dashboard.email_not_verified') }}</span>
+            {% endif %}
+        </div>
+
+        {% if success %}
+            <div class="dashboard-form__success">{{ success }}</div>
+        {% endif %}
+
+        {% if errors|length > 0 %}
+            <div class="dashboard-form__errors">
+                {% for error in errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{{ app_url ~ routes['r|dashboard|POST'].toUri() }}" class="dashboard-form">
+
+            <h2 class="dashboard-form__section">{{ trans('main.dashboard.profile_section') }}</h2>
+
+            <div class="dashboard-form__field">
+                <label class="dashboard-form__label" for="name">{{ trans('main.dashboard.name') }}</label>
+                <input
+                    class="dashboard-form__input"
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ user.getName() }}"
+                    minlength="{{ inputs['name'].min_length }}"
+                    maxlength="{{ inputs['name'].max_length }}"
+                >
+            </div>
+
+            <div class="dashboard-form__field">
+                <label class="dashboard-form__label" for="email">{{ trans('main.dashboard.email') }}</label>
+                <input
+                    class="dashboard-form__input"
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ user.getEmail() }}"
+                    maxlength="{{ inputs['email'].max_length }}"
+                >
+            </div>
+
+            <h2 class="dashboard-form__section">{{ trans('main.dashboard.password_section') }}</h2>
+            <p class="dashboard-form__hint">{{ trans('main.dashboard.password_hint') }}</p>
+
+            <div class="dashboard-form__field">
+                <label class="dashboard-form__label" for="current_password">{{ trans('main.dashboard.current_password') }}</label>
+                <input
+                    class="dashboard-form__input"
+                    type="password"
+                    id="current_password"
+                    name="current_password"
+                    minlength="{{ inputs['password'].min_length }}"
+                    maxlength="{{ inputs['password'].max_length }}"
+                >
+            </div>
+
+            <div class="dashboard-form__field">
+                <label class="dashboard-form__label" for="new_password">{{ trans('main.dashboard.new_password') }}</label>
+                <input
+                    class="dashboard-form__input"
+                    type="password"
+                    id="new_password"
+                    name="new_password"
+                    minlength="{{ inputs['password'].min_length }}"
+                    maxlength="{{ inputs['password'].max_length }}"
+                >
+            </div>
+
+            <button type="submit" class="dashboard-form__button">{{ trans('main.dashboard.save') }}</button>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}

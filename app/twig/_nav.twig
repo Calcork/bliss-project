@@ -1,0 +1,9 @@
+<div class="site-nav">
+    <span class="site-nav__logo">{{ trans('main.home.logo') }}</span>
+    <div class="site-nav__links">
+        {% for link in nav_links %}
+            <a href="{{ link.url }}" class="site-nav__link">{{ link.label }}</a>
+        {% endfor %}
+        {{ react_island('LocaleSwitcher', { links: attributes.get('locale_links') }) }}
+    </div>
+</div>

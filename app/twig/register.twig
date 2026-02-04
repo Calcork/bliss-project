@@ -1,0 +1,52 @@
+{% extends 'layout.twig' %}
+
+{% set app_url = app.getEnv()['APP_URL'] %}
+{% set routes = app.getRoutes().all() %}
+{% set inputs = app.getConfig()['inputs'] %}
+
+{% block title %}{{ trans('main.register.title') }}{% endblock %}
+
+
+{% block body %}
+<div class="register-page">
+
+    <div class="register-card">
+        {{ react_island('RegisterForm', {
+            action: app_url ~ routes['r|register|POST'].toUri(),
+            check_email_url: app_url ~ routes['r|api|check-email|GET'].toUri(),
+            errors: errors,
+            old_name: old_name,
+            old_email: old_email,
+            t: {
+                title: trans('main.register.title'),
+                name: trans('main.register.name'),
+                email: trans('main.register.email'),
+                password: trans('main.register.password'),
+                submit: trans('main.register.submit'),
+                login: trans('main.register.login'),
+                email_available: trans('main.register.email_available'),
+                email_taken: trans('main.register.email_taken'),
+                checking: trans('main.register.checking'),
+                home: trans('main.register.home')
+            },
+            constraints: {
+                name: {
+                    minlength: inputs['name'].min_length,
+                    maxlength: inputs['name'].max_length
+                },
+                email: {
+                    pattern: inputs['email'].regex,
+                    maxlength: inputs['email'].max_length
+                },
+                password: {
+                    minlength: inputs['password'].min_length,
+                    maxlength: inputs['password'].max_length
+                }
+            },
+            login_url: app_url ~ routes['r|login|GET'].toUri(),
+            home_url: app_url
+        }) }}
+    </div>
+
+</div>
+{% endblock %}

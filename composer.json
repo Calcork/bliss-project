@@ -10,7 +10,8 @@
             "App\\Generated\\": "app/generated/",
             "App\\Tests\\": "app/tests/",
             "App\\Lib\\": "app/lib/",
-            "App\\Database\\Migrations\\": "app/database/migrations/"
+            "App\\Database\\Migrations\\": "app/database/migrations/",
+            "App\\AppCode\\": "app/appcode"
         },
       "files": [
         "head.php"

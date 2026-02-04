@@ -4,9 +4,8 @@ namespace Hizech\Bliss\App;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\ORMSetup;
-use Hizech\Bliss\App\HookFulfillers\Http\OnAfterResponseSent;
+use Hizech\Bliss\App\HookFulfillers\Http\OnAfterResponseDecided;
 use Hizech\Bliss\App\HookFulfillers\Http\OnContestContext;
-use Hizech\Bliss\App\HookFulfillers\Http\OnContestController;
 use Hizech\Bliss\App\HookFulfillers\Http\OnContestResponse;
 use Hizech\Bliss\App\HookFulfillers\Http\OnNotFound;
 use Hizech\Bliss\App\Services\HttpRouter as HttpRouterInterface;
@@ -48,10 +47,14 @@ abstract class App
      * @var array<string, array<string, ControllerHandler>> $systemcall_aliases
      */
     private array $systemcall_aliases;
+    /**
+     * @var array<string, array<string, \Hizech\Bliss\Controller\ControllerHandler>> $direct_controller_aliases
+     */
+    private array $direct_controller_aliases;
+
+    private string $root_path;
 
     final public function __construct(
-
-        private string $root_path,
 
         private ?LoggerInterface $logger = null,
         private ?TranslatorInterface $translator = null,
@@ -60,7 +63,7 @@ abstract class App
 
     ) {
 
-
+        $this->root_path = realpath(__DIR__ . '/../../');
         $this->env = null;
         $this->error_handling_initialized = false;
 
@@ -180,22 +183,22 @@ abstract class App
         return $this->root_path;
     }
 
-    final public function getRoutesPath(): string
+    private function getRoutesPath(): string
     {
         return $this->root_path . Util::pathByParts('/app', '/http_routes.php');
     }
 
-    final public function getSystemCallAliasesPath(): string
+    private function getSystemCallAliasesPath(): string
     {
         return $this->root_path . Util::pathByParts('/app', '/systemcall_aliases.php');
     }
 
-    final public function getDirectControllerAliasesPath(): string
+    private function getDirectControllerAliasesPath(): string
     {
         return $this->root_path . Util::pathByParts('/app', '/direct-controller-aliases.php');
     }
 
-    final public function getTranslationsPath(): string
+    private function getTranslationsPath(): string
     {
         return $this->root_path . Util::pathByParts('/app', '/translations');
     }
@@ -469,12 +472,10 @@ abstract class App
 
             $connection = DriverManager::getConnection($connection_conf, $config);
 
-            $entityManager = new DoctrineWrapper($connection, $config);
-
-            return $entityManager;
+            $this->doctrine = new DoctrineWrapper($connection, $config);
         }
 
-        else return $this->getDoctrine();
+        return $this->doctrine;
 
     }
 
@@ -508,19 +509,25 @@ abstract class App
     /**
      * @return array<string, array<string, \Hizech\Bliss\Controller\ControllerHandler>>
      */
-    final public function getDirectControllerAliases(): array
-    {
+    private function createDirectControllerAliases() : array {
         return require($this->getDirectControllerAliasesPath());
     }
 
-    protected function onBeforeFulfillerExecuted(string $name, object $fulfiller) : void {}
-
     /**
-     * @return array<string, OnContestController>
+     * @return array<string, array<string, \Hizech\Bliss\Controller\ControllerHandler>>
      */
-    protected function onHttpContestControllerFulfillers() : array {
-        return [];
+    final public function getDirectControllerAliases(): array
+    {
+        if(isset($this->direct_controller_aliases)) {
+            return $this->direct_controller_aliases;
+        }
+        else {
+            $this->direct_controller_aliases = $this->createDirectControllerAliases();
+            return $this->direct_controller_aliases;
+        }
     }
+
+    protected function onBeforeFulfillerExecuted(string $name, object $fulfiller) : void {}
 
     /**
      * @return array<string, OnContestResponse>
@@ -530,9 +537,9 @@ abstract class App
     }
 
     /**
-     * @return array<string, OnAfterResponseSent>
+     * @return array<string, OnAfterResponseDecided>
      */
-    protected function onHttpAfterResponseSentFulfillers() : array {
+    protected function onHttpAfterResponseDecidedFulfillers() : array {
         return [];
     }
 
@@ -550,18 +557,32 @@ abstract class App
         return [];
     }
 
-    final public function runHttp(Request $request) : void {
+    /**
+     * @param Request $request
+     * @param callable(Response $response) : void |null $when_response_decided
+     * @return Response|null
+     * @throws \ErrorException
+     */
+    final public function runHttp(Request $request,  ?callable $when_response_decided = null) : ?Response {
+
+        if($when_response_decided === null) {
+
+            $when_response_decided = function(Response $response) : void{
+                $response->send();
+            };
+
+        }
 
         // Hook
         foreach($this->onHttpContestContextFulfillers() as $name => $fulfiller) {
 
             $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-            $r = $fulfiller->onContestContext($this, $request);
+            $r = $fulfiller->onContestContext($request);
 
             if ($r instanceof Response) {
                 $r->send();
-                return;
+                return null;
             }
 
             $request = $r;
@@ -577,7 +598,7 @@ abstract class App
 
         if ($routing_result instanceof Found) {
 
-            $route = $this->getHttpRouter()->getRoutes()->all()[$routing_result->route];
+            $route = $this->getRoutes()->all()[$routing_result->route];
 
             $controller_handler = $route->controller_handler;
 
@@ -590,12 +611,12 @@ abstract class App
 
                 $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-                $r = $fulfiller->onNotFound($this, $request);
+                $r = $fulfiller->onNotFound($request);
 
                 if($r === true) continue;
                 elseif($r instanceof Response) {
                     $r->send();
-                    return;
+                    return null;
                 }
                 elseif($r instanceof  ControllerHandler) {
                     $controller_handler = $r;
@@ -613,53 +634,36 @@ abstract class App
             throw new \ErrorException('Unknown http routing result.');
         }
 
-        /**
-         * @var \Hizech\Bliss\Controller\HttpController $controller
-         */
-        $controller = new ($controller_handler->class)($this, $request, $routing_result);
-
-        // Hook
-        foreach($this->onHttpContestControllerFulfillers() as $name => $fulfiller) {
-
-            $this->onBeforeFulfillerExecuted($name, $fulfiller);
-
-            $r = $fulfiller->onContestController($this, $controller);
-
-            if ($r instanceof Response) {
-                $r->send();
-                return;
-            }
-
-            $controller = $r;
-
-        }
+        $controller = new ($controller_handler->class)($this);
 
         /**
          * @var \Symfony\Component\HttpFoundation\Response $response
          */
-        $response = $controller->{$controller_handler->method}();
+        $response = $controller->{$controller_handler->method}($request, $routing_result);
 
         // Hook
         foreach($this->onHttpContestResponseFulfillers() as $name => $fulfiller) {
 
             $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-            $r = $fulfiller->onContestResponse($this, $response);
+            $r = $fulfiller->onContestResponse($response);
 
             $response = $r;
 
         }
 
-        $response->send();
+        $when_response_decided($response);
 
         // Hook
-        foreach($this->onHttpAfterResponseSentFulfillers() as $name => $fulfiller) {
+        foreach($this->onHttpAfterResponseDecidedFulfillers() as $name => $fulfiller) {
 
             $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-            $fulfiller->OnAfterResponseSent($this, $response);
+            $fulfiller->OnAfterResponseDecided($response);
 
         }
+
+        return $response;
 
     }
 
@@ -675,13 +679,6 @@ abstract class App
         if ($echo) echo ($callable)(...$arguments);
         else ($callable)(...$arguments);
 
-    }
-
-    /**
-     * @return array<string, \Hizech\Bliss\App\HookFulfillers\Systemcall\OnContestController>
-     */
-    protected function onSystemcallContestControllerFulfillers() : array {
-        return [];
     }
 
     /**
@@ -710,16 +707,16 @@ abstract class App
      * @param array<string, float|int|bool|string|null> $arguments
      * @param array<string, float|int|bool|string|null> $attributes
      */
-    final public function runSystemcall(string $section, string $method, array $arguments, array $attributes = []) : void {
+    final public function runSystemcall(string $section, string $method, array $arguments, array $attributes = []) : ?SystemcallControllerReport {
 
         // Hook
         foreach($this->onSystemcallContestContextFulfillers() as $name => $fulfiller) {
 
             $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-            $r = $fulfiller->onContestContext($this, $section, $method, $arguments, $attributes);
+            $r = $fulfiller->onContestContext($section, $method, $arguments, $attributes);
 
-            if($r === false) return;
+            if($r === false) return null;
 
             $section = $r['section'];
             $method = $r['method'];
@@ -747,7 +744,7 @@ abstract class App
 
                 $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-                $r = $fulfiller->onNotFound($this, $section, $method, $arguments, $attributes);
+                $r = $fulfiller->onNotFound($section, $method, $arguments, $attributes);
 
                 if($r === true) {
                     continue;
@@ -764,24 +761,10 @@ abstract class App
 
         }
 
-        /**
-         * @var \Hizech\Bliss\Controller\SystemcallController $controller
-         */
-        $controller = new ($controller_handler->class)($this, $section, $method, $arguments, $attributes);
-
-        // Hook
-        foreach($this->onSystemcallContestControllerFulfillers() as $name => $fulfiller) {
-
-            $this->onBeforeFulfillerExecuted($name, $fulfiller);
-
-            $r = $fulfiller->onContestController($this, $controller);
-
-            $controller = $r;
-
-        }
+        $controller = new ($controller_handler->class)($this);
 
         try {
-            $result = $controller->{$controller_handler->method}();
+            $result = $controller->{$controller_handler->method}($section, $method, $arguments, $attributes);
         }
         catch (\Throwable $throwable) {
             $result = SystemcallControllerReport::thrown($throwable);
@@ -792,9 +775,11 @@ abstract class App
 
             $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-            $fulfiller->onAfterControllerRun($this, $result);
+            $fulfiller->onAfterControllerRun($result);
 
         }
+
+        return $result;
 
     }
 

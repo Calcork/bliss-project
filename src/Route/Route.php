@@ -91,7 +91,7 @@ class Route
      * Build canonical URI from arguments
      * @param array<string, mixed> $args
      */
-    public function toUri(array $args): string
+    public function toUri(array $args = []): string
     {
         $uri = '/' . implode('/', array_map('rawurlencode', $this->levels));
 

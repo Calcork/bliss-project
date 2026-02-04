@@ -9,5 +9,4 @@ use Hizech\Bliss\Route\RouteCollection;
 interface HttpRouter
 {
     public function dispatch(HttpMethod $method, string $path): Found | null;
-    function getRoutes(): RouteCollection;
 }
