@@ -3,77 +3,104 @@
 namespace App\Controllers\AppController\SystemCall;
 
 use App\Lib\Migrations\MigrationFactory;
+use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Tools\Console\Command;
 use Hizech\Bliss\Controller\SystemcallControllerReport;
-use Symfony\Component\Console\Command\Command as ConsoleCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class Migrations extends SystemCall
 {
-    private function getDependencyFactory(): \Doctrine\Migrations\DependencyFactory
+
+    private function getFactory(): DependencyFactory
     {
-        $em = $this->app->getDbEntityManager();
-        $config = $this->app->getBag()['config']['migrations'];
-        return MigrationFactory::create($em, $config);
+        /** @var array<string, mixed> $config */
+        $config = $this->app->getConfig()['migrations'];
+
+        return MigrationFactory::create($this->app->getDoctrine(), $config);
     }
 
-    private function runCommand(ConsoleCommand $command): SystemcallControllerReport
+    /** @param string[] $arguments */
+    private function run(Command\DoctrineCommand $command, array $arguments): SystemcallControllerReport
     {
-        $command->setName($this->section . ':' . $this->method);
-
-        $input_args = [];
-        foreach ($this->arguments as $key => $value) {
-            $input_args[str_starts_with($key, '--') ? $key : "--{$key}"] = $value;
+        try {
+            $command->run(new ArrayInput($arguments), new ConsoleOutput());
+            return SystemcallControllerReport::success();
+        } catch (\Throwable $e) {
+            return SystemcallControllerReport::thrown($e);
         }
-
-        $input = new ArrayInput($input_args);
-        $input->setInteractive(false);
-
-        $exit_code = $command->run($input, new ConsoleOutput());
-
-        return $exit_code === 0
-            ? SystemcallControllerReport::Success()
-            : SystemcallControllerReport::ranButFailed("Exited with code {$exit_code}");
     }
 
-    public function diff(): SystemcallControllerReport
+    /**
+     * @param string[] $arguments
+     * @param string[] $attributes
+     */
+    public function diff(string $section, string $method, array $arguments, array $attributes): SystemcallControllerReport
     {
-        return $this->runCommand(new Command\DiffCommand($this->getDependencyFactory()));
+        return $this->run(new Command\DiffCommand($this->getFactory()), $arguments);
     }
 
-    public function migrate(): SystemcallControllerReport
+    /**
+     * @param string[] $arguments
+     * @param string[] $attributes
+     */
+    public function migrate(string $section, string $method, array $arguments, array $attributes): SystemcallControllerReport
     {
-        return $this->runCommand(new Command\MigrateCommand($this->getDependencyFactory()));
+        return $this->run(new Command\MigrateCommand($this->getFactory()), $arguments);
     }
 
-    public function status(): SystemcallControllerReport
+    /**
+     * @param string[] $arguments
+     * @param string[] $attributes
+     */
+    public function status(string $section, string $method, array $arguments, array $attributes): SystemcallControllerReport
     {
-        return $this->runCommand(new Command\StatusCommand($this->getDependencyFactory()));
+        return $this->run(new Command\StatusCommand($this->getFactory()), $arguments);
     }
 
-    public function latest(): SystemcallControllerReport
+    /**
+     * @param string[] $arguments
+     * @param string[] $attributes
+     */
+    public function latest(string $section, string $method, array $arguments, array $attributes): SystemcallControllerReport
     {
-        return $this->runCommand(new Command\LatestCommand($this->getDependencyFactory()));
+        return $this->run(new Command\LatestCommand($this->getFactory()), $arguments);
     }
 
-    public function execute(): SystemcallControllerReport
+    /**
+     * @param string[] $arguments
+     * @param string[] $attributes
+     */
+    public function execute(string $section, string $method, array $arguments, array $attributes): SystemcallControllerReport
     {
-        return $this->runCommand(new Command\ExecuteCommand($this->getDependencyFactory()));
+        return $this->run(new Command\ExecuteCommand($this->getFactory()), $arguments);
     }
 
-    public function generate(): SystemcallControllerReport
+    /**
+     * @param string[] $arguments
+     * @param string[] $attributes
+     */
+    public function generate(string $section, string $method, array $arguments, array $attributes): SystemcallControllerReport
     {
-        return $this->runCommand(new Command\GenerateCommand($this->getDependencyFactory()));
+        return $this->run(new Command\GenerateCommand($this->getFactory()), $arguments);
     }
 
-    public function rollup(): SystemcallControllerReport
+    /**
+     * @param string[] $arguments
+     * @param string[] $attributes
+     */
+    public function rollup(string $section, string $method, array $arguments, array $attributes): SystemcallControllerReport
     {
-        return $this->runCommand(new Command\RollupCommand($this->getDependencyFactory()));
+        return $this->run(new Command\RollupCommand($this->getFactory()), $arguments);
     }
 
-    public function current(): SystemcallControllerReport
+    /**
+     * @param string[] $arguments
+     * @param string[] $attributes
+     */
+    public function current(string $section, string $method, array $arguments, array $attributes): SystemcallControllerReport
     {
-        return $this->runCommand(new Command\CurrentCommand($this->getDependencyFactory()));
+        return $this->run(new Command\CurrentCommand($this->getFactory()), $arguments);
     }
+
 }

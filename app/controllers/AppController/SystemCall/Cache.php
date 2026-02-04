@@ -6,15 +6,30 @@ use Hizech\Bliss\Controller\SystemcallControllerReport;
 
 class Cache extends SystemCall
 {
-    public function purgeAll(): SystemcallControllerReport
+
+    /**
+     * @param string $section
+     * @param string $method
+     * @param bool[]|float[]|int[]|null[]|string[] $arguments
+     * @param bool[]|float[]|int[]|null[]|string[] $attributes
+     */
+    public function purgeAll(string $section, string $method, array $arguments, array $attributes): SystemcallControllerReport
     {
         $this->app->purgeCache();
-        return SystemcallControllerReport::Success();
+        echo 'Cache purged';
+        return SystemcallControllerReport::success();
     }
 
-    public function rebuildAll(): SystemcallControllerReport
+    /**
+     * @param string $section
+     * @param string $method
+     * @param bool[]|float[]|int[]|null[]|string[] $arguments
+     * @param bool[]|float[]|int[]|null[]|string[] $attributes
+     */
+    public function rebuildAll(string $section, string $method, array $arguments, array $attributes): SystemcallControllerReport
     {
         $this->app->rebuildCache();
-        return SystemcallControllerReport::Success();
+        echo 'Cache rebuilt.';
+        return SystemcallControllerReport::success();
     }
 }

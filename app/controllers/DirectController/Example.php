@@ -9,7 +9,7 @@ class Example extends DirectController
 
     function example() : SystemcallControllerReport {
         echo 'Hi';
-        return SystemcallControllerReport::Success();
+        return SystemcallControllerReport::success();
     }
 
 }

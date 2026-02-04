@@ -24,6 +24,11 @@ class TranslationExtension extends AbstractExtension
         ];
     }
 
+    public function setDefaultLocale(string $locale): void
+    {
+        $this->default_locale = $locale;
+    }
+
     /**
      * @param array<string, mixed> $params
      */

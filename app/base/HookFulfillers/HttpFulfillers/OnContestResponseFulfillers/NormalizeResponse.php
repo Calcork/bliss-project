@@ -3,18 +3,12 @@
 namespace App\Base\HookFulfillers\HttpFulfillers\OnContestResponseFulfillers;
 
 use App\Base\HookFulfillers\HookFulfiller;
-use Hizech\Bliss\App\App;
 use Hizech\Bliss\App\HookFulfillers\Http\OnContestResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class NormalizeResponse extends HookFulfiller implements OnContestResponse
 {
 
-    /**
-     * @param App $app
-     * @param Response $response
-     * @return Response
-     */
     function onContestResponse(Response $response): Response
     {
 
@@ -24,7 +18,7 @@ class NormalizeResponse extends HookFulfiller implements OnContestResponse
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
-        $app_url = $app->getEnv()['APP_URL'] ?? '';
+        $app_url = $this->app->getEnv()['APP_URL'];
 
         if (str_starts_with($app_url, 'https://')) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');

@@ -16,6 +16,10 @@ $systemcall_aliases = [
         'purgeAll' => new ControllerHandler(Controllers\Cache::class, 'purgeAll'),
         'rebuildAll' => new ControllerHandler(Controllers\Cache::class, 'rebuildAll'),
     ],
+    'PlaywrightTest' =>
+    [
+        'runTestingData' => new ControllerHandler(Controllers\Testing\Playwright\Playwright::class, 'runTestingData'),
+    ],
     'Migrations' =>
     [
         'diff' => new ControllerHandler(Controllers\Migrations::class, 'diff'),

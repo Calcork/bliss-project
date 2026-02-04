@@ -4,7 +4,6 @@ namespace App\Base\HookFulfillers\HttpFulfillers\OnNotFoundFulfillers;
 
 use App\Base\HookFulfillers\HookFulfiller;
 use App\Controllers\AppController\Http as Controllers;
-use Hizech\Bliss\App\App;
 use Hizech\Bliss\App\HookFulfillers\Http\OnNotFound;
 use Hizech\Bliss\Controller\ControllerHandler;
 use Symfony\Component\HttpFoundation\Request;

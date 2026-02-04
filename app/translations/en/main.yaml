@@ -1,2 +1,92 @@
 greeting: Hello
 farewell: Goodbye
+login.title: Sign In
+login.email: Email
+login.password: Password
+login.submit: Sign In
+login.register: Don't have an account? Register
+login.home: Back to home
+login.invalid_email: Invalid email.
+login.invalid_password: Invalid password.
+login.invalid_credentials: Invalid email or password.
+login.unverified_email: Please verify your email before signing in.
+login.registration_success: Check your email to verify your account.
+login.email_verified: Your email has been verified! You can now sign in.
+home.title: Bliss
+home.logo: Bliss
+home.login: Login
+home.logout: Logout
+home.register: Register
+home.hero_title: Bliss Framework
+home.hero_subtitle: A PHP web framework built on Symfony components.
+home.get_started: Get Started
+home.feature_routing_title: Routing
+home.feature_routing_text: Regex-based HTTP routing with required, optional, and flag parameters.
+home.feature_cli_title: CLI
+home.feature_cli_text: Systemcall controllers for CLI commands with alias support.
+home.feature_orm_title: ORM
+home.feature_orm_text: Doctrine ORM integration with attribute-based entity mapping.
+home.footer: Built with Bliss Framework.
+register.title: Create Account
+register.name: Name
+register.email: Email
+register.password: Password
+register.submit: Register
+register.login: Already have an account? Sign in
+register.email_available: Available
+register.email_taken: Already taken
+register.checking: Checking...
+register.home: Back to home
+register.invalid_name: Invalid name.
+register.invalid_email: Invalid email.
+register.invalid_password: Invalid password.
+register.email_taken_error: This email is already taken.
+email.welcome.subject: Welcome to Bliss
+email.welcome.greeting: "Hello [[name]],"
+email.welcome.message: Welcome! Your account has been created.
+email.verification.subject: Verify your email
+email.verification.greeting: "Hello [[name]],"
+email.verification.message: Please verify your email address by clicking the button below.
+email.verification.button: Verify Email
+verify_email.invalid_token: This verification link is invalid or has expired.
+verify_email.already_verified: This email has already been verified.
+dashboard.title: Account Settings
+dashboard.name: Name
+dashboard.email: Email
+dashboard.current_password: Current Password
+dashboard.new_password: New Password
+dashboard.save: Save Changes
+dashboard.home: Home
+dashboard.logout: Logout
+dashboard.member_since: "Member since [[date]]"
+dashboard.email_verified: Email verified
+dashboard.email_not_verified: Email not verified
+dashboard.profile_section: Profile
+dashboard.password_section: Change Password
+dashboard.password_hint: Leave blank to keep your current password.
+dashboard.success: Your settings have been updated.
+dashboard.invalid_name: Invalid name.
+dashboard.invalid_email: Invalid email.
+dashboard.email_taken: This email is already taken.
+dashboard.invalid_current_password: Invalid current password.
+dashboard.wrong_current_password: Current password is incorrect.
+dashboard.invalid_new_password: Invalid new password.
+login.forgot_password: Forgot your password?
+forgot_password.title: Forgot Password
+forgot_password.email: Email
+forgot_password.submit: Send Reset Link
+forgot_password.success: If an account exists with that email, a password reset link has been sent.
+forgot_password.invalid_email: Invalid email.
+forgot_password.back_to_login: Back to Sign In
+reset_password.title: Reset Password
+reset_password.password: New Password
+reset_password.submit: Reset Password
+reset_password.invalid_token: This password reset link is invalid or has expired.
+reset_password.invalid_password: Invalid password.
+reset_password.success: Your password has been reset. You can now sign in.
+email.password_reset.subject: Reset your password
+email.password_reset.greeting: "Hello [[name]],"
+email.password_reset.message: You requested a password reset. Click the button below to set a new password. This link will expire in 1 hour.
+email.password_reset.button: Reset Password
+language.en: English
+language.he: עברית

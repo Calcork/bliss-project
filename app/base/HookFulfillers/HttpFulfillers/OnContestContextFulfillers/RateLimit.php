@@ -4,7 +4,6 @@ namespace App\Base\HookFulfillers\HttpFulfillers\OnContestContextFulfillers;
 
 use App\Base\HookFulfillers\HookFulfiller;
 use App\Lib\RateLimiter\RateLimiter;
-use Hizech\Bliss\App\App;
 use Hizech\Bliss\App\HookFulfillers\Http\OnContestContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,17 +12,15 @@ class RateLimit extends HookFulfiller implements OnContestContext
 {
 
     /**
-     * @param App $app
      * @param Request $request
      * @return Request|Response
      */
     function onContestContext(Request $request): Request|Response
     {
 
-        if($request->attributes->get('has_admin_key', false)) {
+        if($request->attributes->get('has_bypass_key', false) === true) {
             return $request;
         }
-
 
         $rate_limiter = new RateLimiter(100, '1 minute');
 

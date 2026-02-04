@@ -22,17 +22,34 @@ class User
     #[ORM\Column(type: 'string', length: 255)]
     private string $password_hash;
 
+    #[ORM\Column(type: 'string', length: 64, unique: true, nullable: true)]
+    private ?string $email_verification_token = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $email_verified_at = null;
+
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $created_at;
+
+    #[ORM\ManyToOne(targetEntity: Language::class)]
+    #[ORM\JoinColumn(name: 'language_id', nullable: false)]
+    private Language $language;
+
+    #[ORM\Column(type: 'string', length: 64, unique: true, nullable: true)]
+    private ?string $password_reset_token = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $password_reset_expires_at = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    public function __construct(string $name, string $email, string $password_hash)
+    public function __construct(string $name, string $email, string $password_hash, Language $language)
     {
         $this->name = $name;
         $this->email = $email;
         $this->password_hash = $password_hash;
+        $this->language = $language;
         $this->created_at = new \DateTimeImmutable();
     }
 
@@ -82,5 +99,65 @@ class User
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updated_at;
+    }
+
+    public function getEmailVerificationToken(): ?string
+    {
+        return $this->email_verification_token;
+    }
+
+    public function setEmailVerificationToken(?string $email_verification_token): void
+    {
+        $this->email_verification_token = $email_verification_token;
+        $this->updated_at = new \DateTimeImmutable();
+    }
+
+    public function getEmailVerifiedAt(): ?\DateTimeImmutable
+    {
+        return $this->email_verified_at;
+    }
+
+    public function setEmailVerifiedAt(?\DateTimeImmutable $email_verified_at): void
+    {
+        $this->email_verified_at = $email_verified_at;
+        $this->updated_at = new \DateTimeImmutable();
+    }
+
+    public function isEmailVerified(): bool
+    {
+        return $this->email_verified_at !== null;
+    }
+
+    public function getLanguage(): Language
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(Language $language): void
+    {
+        $this->language = $language;
+        $this->updated_at = new \DateTimeImmutable();
+    }
+
+    public function getPasswordResetToken(): ?string
+    {
+        return $this->password_reset_token;
+    }
+
+    public function setPasswordResetToken(?string $password_reset_token): void
+    {
+        $this->password_reset_token = $password_reset_token;
+        $this->updated_at = new \DateTimeImmutable();
+    }
+
+    public function getPasswordResetExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->password_reset_expires_at;
+    }
+
+    public function setPasswordResetExpiresAt(?\DateTimeImmutable $password_reset_expires_at): void
+    {
+        $this->password_reset_expires_at = $password_reset_expires_at;
+        $this->updated_at = new \DateTimeImmutable();
     }
 }

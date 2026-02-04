@@ -1,2 +1,64 @@
 greeting: שלום
 farewell: להתראות
+login.register: אין לך חשבון? הירשם
+login.home: חזרה לדף הבית
+login.invalid_email: אימייל לא תקין.
+login.invalid_password: סיסמה לא תקינה.
+login.invalid_credentials: אימייל או סיסמה שגויים.
+login.unverified_email: אנא אמת את האימייל שלך לפני ההתחברות.
+login.registration_success: בדוק את האימייל שלך כדי לאמת את החשבון.
+login.email_verified: האימייל שלך אומת! כעת ניתן להתחבר.
+home.title: בליס
+home.logo: בליס
+home.login: התחברות
+home.logout: התנתקות
+home.register: הרשמה
+home.hero_title: בליס פריימוורק
+home.hero_subtitle: פריימוורק PHP הבנוי על רכיבי Symfony.
+home.get_started: התחלה
+home.feature_routing_title: ניתוב
+home.feature_routing_text: ניתוב HTTP מבוסס regex עם פרמטרים נדרשים, אופציונליים ודגלים.
+home.feature_cli_title: CLI
+home.feature_cli_text: בקרי systemcall לפקודות CLI עם תמיכה בכינויים.
+home.feature_orm_title: ORM
+home.feature_orm_text: אינטגרציית Doctrine ORM עם מיפוי ישויות מבוסס attributes.
+home.footer: נבנה עם בליס פריימוורק.
+register.title: יצירת חשבון
+register.name: שם
+register.email: אימייל
+register.password: סיסמה
+register.submit: הרשמה
+register.login: כבר יש לך חשבון? התחבר
+register.email_available: פנוי
+register.email_taken: כבר תפוס
+register.checking: בודק...
+register.home: חזרה לדף הבית
+register.invalid_name: שם לא תקין.
+register.invalid_email: אימייל לא תקין.
+register.invalid_password: סיסמה לא תקינה.
+register.email_taken_error: האימייל הזה כבר תפוס.
+email.welcome.subject: ברוכים הבאים לבליס
+email.welcome.body: "שלום [[name]],\n\nברוכים הבאים! החשבון שלך נוצר בהצלחה."
+email.verification.subject: אימות אימייל
+email.verification.body: "שלום [[name]],\n\nאנא אמת את האימייל שלך על ידי לחיצה על הקישור הבא:\n\n[[link]]"
+verify_email.invalid_token: קישור האימות אינו תקין או שפג תוקפו.
+verify_email.already_verified: האימייל כבר אומת.
+login.forgot_password: שכחת סיסמה?
+forgot_password.title: שכחתי סיסמה
+forgot_password.email: אימייל
+forgot_password.submit: שלח קישור לאיפוס
+forgot_password.success: אם קיים חשבון עם אימייל זה, נשלח קישור לאיפוס סיסמה.
+forgot_password.invalid_email: אימייל לא תקין.
+forgot_password.back_to_login: חזרה להתחברות
+reset_password.title: איפוס סיסמה
+reset_password.password: סיסמה חדשה
+reset_password.submit: איפוס סיסמה
+reset_password.invalid_token: קישור איפוס הסיסמה אינו תקין או שפג תוקפו.
+reset_password.invalid_password: סיסמה לא תקינה.
+reset_password.success: הסיסמה שלך אופסה. כעת ניתן להתחבר.
+email.password_reset.subject: איפוס סיסמה
+email.password_reset.greeting: "שלום [[name]],"
+email.password_reset.message: ביקשת איפוס סיסמה. לחץ על הכפתור למטה כדי להגדיר סיסמה חדשה. קישור זה יפוג תוך שעה.
+email.password_reset.button: איפוס סיסמה
+language.en: English
+language.he: עברית

@@ -2,15 +2,12 @@
 
 namespace App\Controllers\AppController\Http;
 
-use Hizech\Bliss\App\App;
-use Hizech\Bliss\Controller\HttpController;
-use Hizech\Bliss\Route\Matcher\Found;
-use Symfony\Component\HttpFoundation\Request;
+use App\Base\App;
 
-class Http implements HttpController
+class Http
 {
 
-    public function __construct(protected App $app, protected Request $request, protected Found|null $routing_result)
+    public function __construct(protected App $app)
     {}
 
 }

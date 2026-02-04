@@ -11,6 +11,7 @@ class Tailwindcss extends HookFulfiller implements OnContestContext
 {
     public function onContestContext(Request $request): Request|Response
     {
+
         $manager = $this->app->getTailwindcssManager();
 
         $root = $this->app->getRootPath();
@@ -30,5 +31,6 @@ class Tailwindcss extends HookFulfiller implements OnContestContext
         }
 
         return $request;
+
     }
 }
