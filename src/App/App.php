@@ -7,6 +7,7 @@ use Doctrine\ORM\ORMSetup;
 use Hizech\Bliss\App\HookFulfillers\Http\OnAfterResponseDecided;
 use Hizech\Bliss\App\HookFulfillers\Http\OnContestContext;
 use Hizech\Bliss\App\HookFulfillers\Http\OnContestResponse;
+use Hizech\Bliss\App\HookFulfillers\Http\OnFound;
 use Hizech\Bliss\App\HookFulfillers\Http\OnNotFound;
 use Hizech\Bliss\App\Services\HttpRouter as HttpRouterInterface;
 use Hizech\Bliss\App\Services\Logger as LoggerInterface;
@@ -333,12 +334,12 @@ abstract class App
      */
     private function getAllRouteNames(): array
     {
-        return array_keys($this->getRoutes()->all());
+        return array_keys($this->getRoutes()->allLinearRoutes());
     }
 
     private function getRouteRegex(string $route_name): string
     {
-        $route = $this->getRoutes()->all()[$route_name] ?? null;
+        $route = $this->getRoutes()->allLinearRoutes()[$route_name] ?? null;
 
         if ($route === null) {
             return '';
@@ -551,6 +552,13 @@ abstract class App
     }
 
     /**
+     * @return array<string, OnFound>
+     */
+    protected function onHttpFoundFulfillers() : array {
+        return [];
+    }
+
+    /**
      * @return array<string, OnContestContext>
      */
     protected function onHttpContestContextFulfillers() : array {
@@ -598,9 +606,31 @@ abstract class App
 
         if ($routing_result instanceof Found) {
 
-            $route = $this->getRoutes()->all()[$routing_result->route];
+            $route = $this->getHttpRouter()->getFlatRoutes()[$routing_result->route];
 
             $controller_handler = $route->controller_handler;
+
+            // Hook
+            foreach($this->onHttpFoundFulfillers() as $name => $fulfiller) {
+
+                $this->onBeforeFulfillerExecuted($name, $fulfiller);
+
+                $r = $fulfiller->onFound($request, $routing_result);
+
+                if($r === true) continue;
+                elseif($r instanceof Response) {
+                    $r->send();
+                    return null;
+                }
+                elseif($r instanceof  ControllerHandler) {
+                    $controller_handler = $r;
+                    break;
+                }
+                else {
+                    throw new \LogicException('Impossible.');
+                }
+
+            }
 
         }
 

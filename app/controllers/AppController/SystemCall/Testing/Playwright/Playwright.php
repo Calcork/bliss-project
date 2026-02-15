@@ -74,11 +74,12 @@ class Playwright extends SystemCall
      */
     private function resolveControllers(array $arguments) : array
     {
-        if (count($arguments) > 0) {
+        if (isset($arguments['classes']) && is_string($arguments['classes'])) {
+            $classes = explode(',', $arguments['classes']);
             $controllers = [];
-            foreach ($arguments as $argument) {
-                /** @var class-string $argument */
-                $controllers[] = new $argument($this->app);
+            foreach ($classes as $class) {
+                /** @var class-string $class */
+                $controllers[] = new $class($this->app);
             }
             return $controllers;
         }

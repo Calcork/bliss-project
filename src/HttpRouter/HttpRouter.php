@@ -4,6 +4,7 @@ namespace Hizech\Bliss\HttpRouter;
 
 use Hizech\Bliss\Route\HttpMethod;
 use Hizech\Bliss\Route\Matcher\Found;
+use Hizech\Bliss\Route\Route;
 use Hizech\Bliss\Route\RouteCollection;
 
 /**
@@ -12,20 +13,31 @@ use Hizech\Bliss\Route\RouteCollection;
  */
 final class HttpRouter implements \Hizech\Bliss\App\Services\HttpRouter
 {
-    public const string NAME_SEP = '|';
 
+    /** @var array<string, Route> */
+    private array $flat_routes;
+
+    /**
+     * @param array<string, string>|null $cache_regex
+     */
     public function __construct(
         private RouteCollection $routes,
-        /**
-         * @var array<string, string>|null
-         */
         private ?array $cache_regex = null,
     ) {
+        $this->flat_routes = $routes->allLinearRoutes();
     }
 
     function getRoutes(): RouteCollection
     {
         return $this->routes;
+    }
+
+    /**
+     * @return array<string, Route>
+     */
+    function getFlatRoutes(): array
+    {
+        return $this->flat_routes;
     }
 
     private static function normalizePath(string $path): string
@@ -39,7 +51,7 @@ final class HttpRouter implements \Hizech\Bliss\App\Services\HttpRouter
     {
         $normalized_path = self::normalizePath($path);
 
-        foreach ($this->routes->all() as $name => $route) {
+        foreach ($this->flat_routes as $name => $route) {
             if (!in_array($method, $route->http_methods, true)) {
                 continue;
             }

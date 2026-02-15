@@ -14,7 +14,7 @@ return [
         'migrations_paths' => [
             'App\\Database\\Migrations' => __DIR__ . '/../database/migrations',
         ],
-        'all_or_nothing' => true,
+        'all_or_nothing' => false,
         'transactional' => false,
         'check_database_platform' => true,
         'organize_migrations' => 'none',

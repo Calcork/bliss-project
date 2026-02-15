@@ -33,7 +33,7 @@ module.exports = defineConfig({
     use: {
         baseURL: appUrl,
         trace: 'off',
-        screenshot: 'off',
+        screenshot: 'on',
         video: 'off',
         headless: true,
         actionTimeout: 15000,
@@ -42,9 +42,17 @@ module.exports = defineConfig({
 
     projects: [
         {
-            name: 'chromium',
+            name: 'desktop',
             use: {
                 ...devices['Desktop Chrome'],
+                viewport: { width: 1000, height: 800 },
+            },
+        },
+        {
+            name: 'mobile',
+            use: {
+                ...devices['Desktop Chrome'],
+                viewport: { width: 320, height: 800 },
             },
         },
     ],

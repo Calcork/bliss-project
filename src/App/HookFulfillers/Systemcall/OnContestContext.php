@@ -17,7 +17,7 @@ interface OnContestContext
      *      method: string,
      *      arguments: array<string, float|int|bool|string|null>,
      *      attributes: array<string, mixed>
-     *  }
+     *  }|false
      */
     function onContestContext(string $section, string $method, array $arguments, array $attributes) : array|false;
 

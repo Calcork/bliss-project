@@ -1,9 +1,0 @@
-{% extends 'emails/layout.twig' %}
-
-{% block heading %}{{ subject }}{% endblock %}
-
-{% block content %}
-<p style="font-size: 14px; color: #374151; line-height: 1.6; margin: 0 0 16px 0;">{{ greeting }}</p>
-<p style="font-size: 14px; color: #374151; line-height: 1.6; margin: 0 0 24px 0;">{{ message }}</p>
-<a href="{{ url }}" style="display: inline-block; background-color: #2563eb; color: #ffffff; font-size: 14px; font-weight: 600; padding: 10px 24px; border-radius: 6px; text-decoration: none;">{{ button }}</a>
-{% endblock %}

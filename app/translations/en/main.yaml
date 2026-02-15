@@ -16,10 +16,12 @@ home.title: Bliss
 home.logo: Bliss
 home.login: Login
 home.logout: Logout
+home.admin_panel: Admin Panel
 home.register: Register
 home.hero_title: Bliss Framework
 home.hero_subtitle: A PHP web framework built on Symfony components.
 home.get_started: Get Started
+home.go_to_dashboard: Go to Dashboard
 home.feature_routing_title: Routing
 home.feature_routing_text: Regex-based HTTP routing with required, optional, and flag parameters.
 home.feature_cli_title: CLI
@@ -71,6 +73,20 @@ dashboard.email_taken: This email is already taken.
 dashboard.invalid_current_password: Invalid current password.
 dashboard.wrong_current_password: Current password is incorrect.
 dashboard.invalid_new_password: Invalid new password.
+dashboard.nav.profile: Profile
+dashboard.nav.security: Security
+dashboard.nav.delete_account: Delete Account
+dashboard.delete_account.title: Delete Account
+dashboard.delete_account.heading: Delete Account
+dashboard.delete_account.description: Once you delete your account, all of your data will be permanently removed. This action cannot be undone.
+dashboard.delete_account.warning: This will permanently delete your account, profile, and all associated data. You will not be able to recover your account.
+dashboard.delete_account.password_label: Confirm your password
+dashboard.delete_account.submit: Delete My Account
+dashboard.delete_account.invalid_password: Invalid password.
+dashboard.delete_account.wrong_password: Password is incorrect.
+dashboard.security_description: Update your password to keep your account secure.
+dashboard.change_password_button: Change Password
+dashboard.password_changed: Your password has been changed.
 login.forgot_password: Forgot your password?
 forgot_password.title: Forgot Password
 forgot_password.email: Email
@@ -90,3 +106,68 @@ email.password_reset.message: You requested a password reset. Click the button b
 email.password_reset.button: Reset Password
 language.en: English
 language.he: עברית
+not_found.title: Page Not Found
+not_found.heading: Page Not Found
+not_found.message: The page you are looking for does not exist or has been moved.
+not_found.back_home: Back to Home
+admin.title: Admin Panel
+admin.panel_title: Admin Panel
+admin.home: Home
+admin.logout: Logout
+admin.welcome: Welcome to Admin Panel
+admin.welcome_description: Manage your application from here.
+admin.nav.dashboard: Dashboard
+admin.nav.users: Users
+admin.stats.total_users: Total Users
+admin.stats.verified_users: Verified
+admin.stats.admin_users: Admins
+admin.entity.users.title: Users - Admin
+admin.entity.users.heading: Users
+admin.entity.users.singular: User
+admin.entity.users.nav: Users
+admin.entity.users.edit: Edit User
+admin.entity.users.field.name: Name
+admin.entity.users.field.email: Email
+admin.entity.users.field.password: Password
+admin.entity.users.field.is_admin: Admin
+admin.entity.users.field.email_verified_at: Verified
+admin.entity.users.field.language: Language
+admin.entity.users.field.created_at: Joined
+admin.entity.site_settings.title: Site Settings - Admin
+admin.entity.site_settings.heading: Site Settings
+admin.entity.site_settings.singular: Site Settings
+admin.entity.site_settings.nav: Site Settings
+admin.entity.site_settings.edit: Edit Site Settings
+admin.entity.site_settings.field.site_name: Site Name
+admin.entity.site_settings.field.site_description: Site Description
+admin.entity.site_settings.field.contact_email: Contact Email
+admin.entity.site_settings.field.facebook_url: Facebook URL
+admin.entity.site_settings.field.twitter_url: Twitter URL
+admin.entity.site_settings.field.instagram_url: Instagram URL
+admin.entity.site_settings.field.maintenance_mode: Maintenance Mode
+admin.entity.site_settings.field.google_analytics_id: Google Analytics ID
+admin.entity.languages.title: Languages - Admin
+admin.entity.languages.heading: Languages
+admin.entity.languages.singular: Language
+admin.entity.languages.nav: Languages
+admin.entity.languages.edit: Edit Language
+admin.entity.languages.field.name: Name
+admin.entity.languages.field.locale: Locale
+admin.entity.actions.label: Actions
+admin.entity.actions.edit: Edit
+admin.entity.actions.delete: Delete
+admin.entity.actions.create: Create
+admin.entity.actions.save: Save
+admin.entity.actions.cancel: Cancel
+admin.entity.actions.confirm_delete: Are you sure you want to delete this record?
+admin.entity.messages.saved: Saved successfully.
+admin.entity.messages.deleted: Deleted successfully.
+admin.entity.messages.created: Created successfully.
+admin.entity.messages.unique_violation: This value already exists.
+admin.entity.messages.delete_last_admin: Cannot remove admin role from the last admin.
+admin.entity.messages.delete_in_use: Cannot delete this record because it is in use.
+admin.entity.validation.required: "[[field]] is required."
+admin.entity.validation.invalid: "[[field]] is invalid."
+admin.entity.types.yes: Yes
+admin.entity.types.no: No
+admin.entity.types.not_verified: Not Verified

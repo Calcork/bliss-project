@@ -28,6 +28,8 @@ class Route
         public readonly ControllerHandler $controller_handler,
         array $http_methods,
         array $parameters = [],
+        /** @var array<int, string> $tags */
+        public private(set) array $tags = [],
     ) {
         // Validate levels: only allow a–z, 0–9, -, _
         foreach ($levels as $level) {

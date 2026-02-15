@@ -28,6 +28,8 @@ test.describe('forgot password', () => {
     /** @type {string} */
     let url;
     /** @type {string} */
+    let base_email;
+    /** @type {string} */
     let email;
     /** @type {string} */
     let old_password;
@@ -40,7 +42,7 @@ test.describe('forgot password', () => {
 
     test.beforeAll(() => {
         url = process.env.TEST_URL;
-        email = process.env.TEST_EMAIL;
+        base_email = process.env.TEST_EMAIL;
         old_password = process.env.OLD_PASSWORD;
         new_password = process.env.NEW_PASSWORD;
         bypass_key = process.env.BYPASS_KEY;
@@ -49,6 +51,9 @@ test.describe('forgot password', () => {
 
     test.beforeEach(async ({ page }) => {
         await page.setExtraHTTPHeaders({ 'X-Bypass-Key': bypass_key });
+        // Make email unique per viewport to avoid race between desktop/mobile workers
+        const viewport = page.viewportSize();
+        email = base_email.replace('@', `-${viewport.width}@`);
     });
 
     test('forgot password page loads', async ({ page }) => {
@@ -94,9 +99,6 @@ test.describe('forgot password', () => {
     });
 
     test('password reset email is sent via Mailhog', async ({ page }) => {
-        // Clear mailhog
-        await fetch(mailhog_api + '/api/v1/messages', { method: 'DELETE' });
-
         // Request reset
         await page.goto(url + '/forgot-password');
         await page.fill('#email', email);
@@ -115,9 +117,6 @@ test.describe('forgot password', () => {
     });
 
     test('full flow: forgot password, click reset link, set new password, login', async ({ page }) => {
-        // Clear mailhog
-        await fetch(mailhog_api + '/api/v1/messages', { method: 'DELETE' });
-
         // Step 1: Request password reset
         await page.goto(url + '/forgot-password');
         await page.fill('#email', email);
@@ -161,9 +160,6 @@ test.describe('forgot password', () => {
     });
 
     test('used reset token cannot be reused', async ({ page }) => {
-        // Clear mailhog
-        await fetch(mailhog_api + '/api/v1/messages', { method: 'DELETE' });
-
         // Request reset
         await page.goto(url + '/forgot-password');
         await page.fill('#email', email);

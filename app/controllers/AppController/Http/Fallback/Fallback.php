@@ -12,7 +12,14 @@ class Fallback extends Http
 
     function get(Request $request, Found|null $routing_result) : Response
     {
-       return new Response('Not Found', 404);
+        $is_logged_in = $request->getSession()->has('user_id');
+
+        $html = $this->app->getTemplateMaster()->twigCustomRender('not-found.twig', [
+            'is_logged_in' => $is_logged_in,
+            'attributes' => $request->attributes,
+        ]);
+
+        return new Response($html, 404);
     }
 
 }

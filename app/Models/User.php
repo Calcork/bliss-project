@@ -16,6 +16,9 @@ class User
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $is_admin = false;
+
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     private string $email;
 
@@ -72,6 +75,18 @@ class User
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getIsAdmin(): bool
+    {
+        return $this->is_admin;
+    }
+
+    public function setIsAdmin(bool $is_admin): void {
+
+        $this->is_admin = $is_admin;
+        $this->updated_at = new \DateTimeImmutable();
+
     }
 
     public function setEmail(string $email): void

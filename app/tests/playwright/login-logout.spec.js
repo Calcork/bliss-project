@@ -35,9 +35,9 @@ test.describe('login and logout', () => {
 
         await page.waitForURL(url + '/', { timeout: 10000 });
 
-        // Homepage should show logout link, not login
-        await expect(page.locator('a[href*="/logout"]')).toBeVisible();
-        await expect(page.locator('a[href*="/login"]')).not.toBeVisible();
+        // Homepage should show logout link in nav, not login
+        await expect(page.locator('.site-nav__link[href*="/logout"]')).toBeVisible();
+        await expect(page.locator('.site-nav__link[href*="/login"]')).not.toBeVisible();
     });
 
     test('login with wrong password shows error', async ({ page }) => {
@@ -88,17 +88,17 @@ test.describe('login and logout', () => {
         await page.click('a[href*="/logout"]');
         await page.waitForURL('**/login**', { timeout: 10000 });
 
-        // Go back to homepage — should see login link, not logout
+        // Go back to homepage — should see login link in nav, not logout
         await page.goto(url + '/');
-        await expect(page.locator('a[href*="/login"]')).toBeVisible();
+        await expect(page.locator('.site-nav__link[href*="/login"]')).toBeVisible();
         await expect(page.locator('a[href*="/logout"]')).not.toBeVisible();
     });
 
     test('homepage shows login and register links when not logged in', async ({ page }) => {
         await page.goto(url + '/');
 
-        await expect(page.locator('a[href*="/login"]')).toBeVisible();
-        await expect(page.locator('a[href*="/register"]')).toBeVisible();
+        await expect(page.locator('.site-nav__link[href*="/login"]')).toBeVisible();
+        await expect(page.locator('.site-nav__link[href*="/register"]')).toBeVisible();
         await expect(page.locator('a[href*="/logout"]')).not.toBeVisible();
     });
 });

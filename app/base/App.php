@@ -10,6 +10,7 @@ use App\Base\HookFulfillers\HttpFulfillers\OnContestContextFulfillers\RedirectSl
 use App\Base\HookFulfillers\HttpFulfillers\OnContestContextFulfillers\DecideUserDetails;
 use App\Base\HookFulfillers\HttpFulfillers\OnContestContextFulfillers\Tailwindcss;
 use App\Base\HookFulfillers\HttpFulfillers\OnContestResponseFulfillers\BaseResponse;
+use App\Base\HookFulfillers\HttpFulfillers\OnFoundFulfillers\BaseFound;
 use App\Base\HookFulfillers\HttpFulfillers\OnNotFoundFulfillers\BaseNotFound;
 use App\Base\HookFulfillers\SystemcallFulfillers\OnAfterControllerRunFulfillers\BaseAfterControllerRun;
 use App\Base\HookFulfillers\SystemcallFulfillers\OnAfterControllerRunFulfillers\LogFailures;
@@ -103,7 +104,6 @@ class App extends \Hizech\Bliss\App\App
         }
 
         $env = $this->getEnv();
-        $is_dev = $env['APP_DEVELOPMENT'];
 
         $array_loader = new ArrayLoader();
         $fake_loader = new FakeTemplateLoader();
@@ -118,9 +118,10 @@ class App extends \Hizech\Bliss\App\App
         $cache_reporter_path = Util::joinPath($this->getStoragePath(), 'twig', 'auto-template-cache', 'cache_reporter.php');
 
         $twig = new BetterTwig($loader, [
-            'cache' => $is_dev ? false : new WindowsSafeFilesystemCache($twig_cache_path),
-            'auto_reload' => $is_dev,
-            'debug' => $is_dev,
+            'cache' => $env['APP_DEVELOPMENT'] ? false : new WindowsSafeFilesystemCache($twig_cache_path),
+            'auto_reload' => $env['APP_DEVELOPMENT'],
+            'debug' => $env['APP_DEVELOPMENT'],
+            'strict_variables' => $env['APP_DEVELOPMENT'],
         ]);
 
         $twig->addExtension(new TranslationExtension($this->getTranslator()));
@@ -131,7 +132,7 @@ class App extends \Hizech\Bliss\App\App
             $array_loader,
             $fake_loader,
             $cache_reporter_path,
-            $is_dev,
+            $env['APP_DEVELOPMENT'],
         );
 
         $twig->addGlobal('app', $this);
@@ -209,12 +210,6 @@ class App extends \Hizech\Bliss\App\App
     {
         $ar = [
             'BaseContext' => new HttpBaseContext($this),
-            'RedirectSlash' => new RedirectSlash($this),
-            'NormalizeSession' => new NormalizeSession($this),
-            'BypassKey' => new BypassKey($this),
-            'RateLimit' => new HookFulfillers\HttpFulfillers\OnContestContextFulfillers\RateLimit($this),
-            'DecideUserDetails' => new DecideUserDetails($this),
-            'Tailwindcss' => new Tailwindcss($this),
         ];
         return array_merge(parent::onHttpContestContextFulfillers(), $ar);
     }
@@ -233,6 +228,14 @@ class App extends \Hizech\Bliss\App\App
             'BaseNotFound' => new BaseNotFound($this),
         ];
         return array_merge(parent::onHttpNotFoundFulfillers(), $ar);
+    }
+
+    protected function onHttpFoundFulfillers(): array
+    {
+        $ar = [
+            'BaseFound' => new BaseFound($this),
+        ];
+        return array_merge(parent::onHttpFoundFulfillers(), $ar);
     }
 
     protected function onHttpAfterResponseDecidedFulfillers(): array

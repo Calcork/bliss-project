@@ -12,10 +12,12 @@ home.title: בליס
 home.logo: בליס
 home.login: התחברות
 home.logout: התנתקות
+home.admin_panel: פאנל ניהול
 home.register: הרשמה
 home.hero_title: בליס פריימוורק
 home.hero_subtitle: פריימוורק PHP הבנוי על רכיבי Symfony.
 home.get_started: התחלה
+home.go_to_dashboard: עבור ללוח הבקרה
 home.feature_routing_title: ניתוב
 home.feature_routing_text: ניתוב HTTP מבוסס regex עם פרמטרים נדרשים, אופציונליים ודגלים.
 home.feature_cli_title: CLI
@@ -60,5 +62,105 @@ email.password_reset.subject: איפוס סיסמה
 email.password_reset.greeting: "שלום [[name]],"
 email.password_reset.message: ביקשת איפוס סיסמה. לחץ על הכפתור למטה כדי להגדיר סיסמה חדשה. קישור זה יפוג תוך שעה.
 email.password_reset.button: איפוס סיסמה
+not_found.title: הדף לא נמצא
+not_found.heading: הדף לא נמצא
+not_found.message: הדף שאתה מחפש אינו קיים או שהועבר.
+not_found.back_home: חזרה לדף הבית
 language.en: English
+admin.title: פאנל ניהול
+admin.panel_title: פאנל ניהול
+admin.home: דף הבית
+admin.logout: התנתקות
+admin.welcome: ברוכים הבאים לפאנל הניהול
+admin.welcome_description: נהל את האפליקציה שלך מכאן.
+admin.nav.dashboard: לוח בקרה
+admin.nav.users: משתמשים
+admin.stats.total_users: סה"כ משתמשים
+admin.stats.verified_users: מאומתים
+admin.stats.admin_users: מנהלים
+admin.entity.users.title: משתמשים - ניהול
+admin.entity.users.heading: משתמשים
+admin.entity.users.singular: משתמש
+admin.entity.users.nav: משתמשים
+admin.entity.users.edit: ערוך משתמש
+admin.entity.users.field.name: שם
+admin.entity.users.field.email: אימייל
+admin.entity.users.field.password: סיסמה
+admin.entity.users.field.is_admin: מנהל
+admin.entity.users.field.email_verified_at: מאומת
+admin.entity.users.field.language: שפה
+admin.entity.users.field.created_at: הצטרפות
+admin.entity.site_settings.title: הגדרות אתר - ניהול
+admin.entity.site_settings.heading: הגדרות אתר
+admin.entity.site_settings.singular: הגדרות אתר
+admin.entity.site_settings.nav: הגדרות אתר
+admin.entity.site_settings.edit: ערוך הגדרות אתר
+admin.entity.site_settings.field.site_name: שם האתר
+admin.entity.site_settings.field.site_description: תיאור האתר
+admin.entity.site_settings.field.contact_email: אימייל ליצירת קשר
+admin.entity.site_settings.field.facebook_url: Facebook URL
+admin.entity.site_settings.field.twitter_url: Twitter URL
+admin.entity.site_settings.field.instagram_url: Instagram URL
+admin.entity.site_settings.field.maintenance_mode: מצב תחזוקה
+admin.entity.site_settings.field.google_analytics_id: Google Analytics ID
+admin.entity.languages.title: שפות - ניהול
+admin.entity.languages.heading: שפות
+admin.entity.languages.singular: שפה
+admin.entity.languages.nav: שפות
+admin.entity.languages.edit: ערוך שפה
+admin.entity.languages.field.name: שם
+admin.entity.languages.field.locale: קוד שפה
+admin.entity.actions.label: פעולות
+admin.entity.actions.edit: ערוך
+admin.entity.actions.delete: מחק
+admin.entity.actions.create: צור
+admin.entity.actions.save: שמור
+admin.entity.actions.cancel: ביטול
+admin.entity.actions.confirm_delete: האם אתה בטוח שברצונך למחוק רשומה זו?
+admin.entity.messages.saved: נשמר בהצלחה.
+admin.entity.messages.deleted: נמחק בהצלחה.
+admin.entity.messages.created: נוצר בהצלחה.
+admin.entity.messages.unique_violation: הערך הזה כבר קיים.
+admin.entity.messages.delete_last_admin: לא ניתן להסיר תפקיד מנהל מהמנהל האחרון.
+admin.entity.messages.delete_in_use: לא ניתן למחוק רשומה זו כי היא בשימוש.
+admin.entity.validation.required: ".[[field]] הוא שדה חובה"
+admin.entity.validation.invalid: ".[[field]] אינו תקין"
+admin.entity.types.yes: כן
+admin.entity.types.no: לא
+admin.entity.types.not_verified: לא מאומת
 language.he: עברית
+dashboard.title: הגדרות חשבון
+dashboard.name: שם
+dashboard.email: אימייל
+dashboard.current_password: סיסמה נוכחית
+dashboard.new_password: סיסמה חדשה
+dashboard.save: שמירת שינויים
+dashboard.home: דף הבית
+dashboard.logout: התנתקות
+dashboard.member_since: "חבר מאז [[date]]"
+dashboard.email_verified: אימייל מאומת
+dashboard.email_not_verified: אימייל לא מאומת
+dashboard.profile_section: פרופיל
+dashboard.password_section: שינוי סיסמה
+dashboard.password_hint: השאר ריק כדי לשמור את הסיסמה הנוכחית.
+dashboard.success: ההגדרות שלך עודכנו.
+dashboard.invalid_name: שם לא תקין.
+dashboard.invalid_email: אימייל לא תקין.
+dashboard.email_taken: האימייל הזה כבר תפוס.
+dashboard.invalid_current_password: סיסמה נוכחית לא תקינה.
+dashboard.wrong_current_password: הסיסמה הנוכחית שגויה.
+dashboard.invalid_new_password: סיסמה חדשה לא תקינה.
+dashboard.nav.profile: פרופיל
+dashboard.nav.security: אבטחה
+dashboard.nav.delete_account: מחיקת חשבון
+dashboard.delete_account.title: מחיקת חשבון
+dashboard.delete_account.heading: מחיקת חשבון
+dashboard.delete_account.description: ברגע שתמחק את החשבון שלך, כל הנתונים שלך יוסרו לצמיתות. לא ניתן לבטל פעולה זו.
+dashboard.delete_account.warning: פעולה זו תמחק לצמיתות את החשבון, הפרופיל וכל הנתונים המשויכים. לא תוכל לשחזר את החשבון.
+dashboard.delete_account.password_label: אשר את הסיסמה שלך
+dashboard.delete_account.submit: מחק את החשבון שלי
+dashboard.delete_account.invalid_password: סיסמה לא תקינה.
+dashboard.delete_account.wrong_password: הסיסמה שגויה.
+dashboard.security_description: עדכן את הסיסמה שלך כדי לשמור על אבטחת החשבון.
+dashboard.change_password_button: שינוי סיסמה
+dashboard.password_changed: הסיסמה שלך שונתה.
