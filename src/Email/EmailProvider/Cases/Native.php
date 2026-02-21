@@ -7,7 +7,6 @@ use Hizech\Bliss\Email\Data\EmailBody\EmailBody;
 use Hizech\Bliss\Email\Data\EmailBody\EmailBodyType;
 use Hizech\Bliss\Email\Data\EmailRecipients\EmailRecipients;
 use Hizech\Bliss\Email\EmailProvider\EmailProvider;
-use Hizech\Bliss\Email\EmailProvider\EmailStatus;
 
 class Native implements EmailProvider
 {
@@ -16,7 +15,7 @@ class Native implements EmailProvider
         EmailRecipients $to,
         string $subject,
         EmailBody $body
-    ): EmailStatus {
+    ): bool {
 
         // Check if mail function is available
         if (!function_exists('mail')) {
@@ -62,7 +61,7 @@ class Native implements EmailProvider
             throw new \RuntimeException('Native mail failed: ' . $msg);
         }
 
-        return EmailStatus::Sent;
+        return true;
     }
 
     /**

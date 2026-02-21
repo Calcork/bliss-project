@@ -9,6 +9,6 @@ use Hizech\Bliss\Email\Data\EmailRecipients\EmailRecipients;
 interface EmailProvider
 {
 
-    function sendEmail(EmailAddress $from, EmailRecipients $to, string $subject, EmailBody $body) : EmailStatus;
+    function sendEmail(EmailAddress $from, EmailRecipients $to, string $subject, EmailBody $body) : bool;
     function testConnection(): bool;
 }

@@ -15,7 +15,7 @@ class BaseNotFound  extends HookFulfiller implements OnNotFound
 
     public function onNotFound(Request $request): ControllerHandler|Response
     {
-        return new RedirectResponse($this->app->getEnv()['APP_URL'] . $this->app->getRoutes()->allLinearRoutes()['r|GET']->toUri());
+        return new RedirectResponse($this->app->getEnv()['APP_URL'] . $this->app->getRoutes()->allLinearRoutes()['root']->toUri());
     }
 
 }

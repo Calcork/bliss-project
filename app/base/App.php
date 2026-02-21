@@ -3,12 +3,7 @@
 namespace App\Base;
 
 use App\Base\HookFulfillers\HttpFulfillers\OnAfterResponseDecidedFulfillers\BaseAfterResponseDecided;
-use App\Base\HookFulfillers\HttpFulfillers\OnContestContextFulfillers\BypassKey;
-use App\Base\HookFulfillers\HttpFulfillers\OnContestContextFulfillers\BaseContext as HttpBaseContext;
-use App\Base\HookFulfillers\HttpFulfillers\OnContestContextFulfillers\NormalizeSession;
-use App\Base\HookFulfillers\HttpFulfillers\OnContestContextFulfillers\RedirectSlash;
-use App\Base\HookFulfillers\HttpFulfillers\OnContestContextFulfillers\DecideUserDetails;
-use App\Base\HookFulfillers\HttpFulfillers\OnContestContextFulfillers\Tailwindcss;
+use App\Base\HookFulfillers\HttpFulfillers\OnContestRequestFulfillers\BaseRequest as HttpBaseContext;
 use App\Base\HookFulfillers\HttpFulfillers\OnContestResponseFulfillers\BaseResponse;
 use App\Base\HookFulfillers\HttpFulfillers\OnFoundFulfillers\BaseFound;
 use App\Base\HookFulfillers\HttpFulfillers\OnNotFoundFulfillers\BaseNotFound;
@@ -206,12 +201,12 @@ class App extends \Hizech\Bliss\App\App
     }
 
 
-    protected function onHttpContestContextFulfillers(): array
+    protected function onHttpContestRequestFulfillers(): array
     {
         $ar = [
-            'BaseContext' => new HttpBaseContext($this),
+            'BaseRequest' => new HttpBaseContext($this),
         ];
-        return array_merge(parent::onHttpContestContextFulfillers(), $ar);
+        return array_merge(parent::onHttpContestRequestFulfillers(), $ar);
     }
 
     protected function onHttpContestResponseFulfillers(): array
@@ -249,7 +244,7 @@ class App extends \Hizech\Bliss\App\App
     protected function onSystemcallContestContextFulfillers(): array
     {
         $ar = [
-            'BaseContext' => new SystemcallBaseContext($this),
+            'BaseRequest' => new SystemcallBaseContext($this),
         ];
         return array_merge(parent::onSystemcallContestContextFulfillers(), $ar);
     }

@@ -14,7 +14,10 @@ class User
     private int $id; /** @phpstan-ignore-line */
 
     #[ORM\Column(type: 'string', length: 255)]
-    private string $name;
+    private string $first_name;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $last_name;
 
     #[ORM\Column(type: 'boolean')]
     private bool $is_admin = false;
@@ -47,9 +50,10 @@ class User
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    public function __construct(string $name, string $email, string $password_hash, Language $language)
+    public function __construct(string $first_name, string $last_name, string $email, string $password_hash, Language $language)
     {
-        $this->name = $name;
+        $this->first_name = $first_name;
+        $this->last_name = $last_name;
         $this->email = $email;
         $this->password_hash = $password_hash;
         $this->language = $language;
@@ -61,16 +65,28 @@ class User
         return $this->id;
     }
 
-    public function getName(): string
+    public function getFirstName(): string
     {
-        return $this->name;
+        return $this->first_name;
     }
 
-    public function setName(string $name): void
+    public function setFirstName(string $first_name): void
     {
-        $this->name = $name;
+        $this->first_name = $first_name;
         $this->updated_at = new \DateTimeImmutable();
     }
+
+    public function getLastName(): string
+    {
+        return $this->last_name;
+    }
+
+    public function setLastName(string $last_name): void
+    {
+        $this->last_name = $last_name;
+        $this->updated_at = new \DateTimeImmutable();
+    }
+
 
     public function getEmail(): string
     {

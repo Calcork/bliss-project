@@ -7,7 +7,6 @@ use Hizech\Bliss\Email\Data\EmailBody\EmailBody;
 use Hizech\Bliss\Email\Data\EmailBody\EmailBodyType;
 use Hizech\Bliss\Email\Data\EmailRecipients\EmailRecipients;
 use Hizech\Bliss\Email\EmailProvider\EmailProvider;
-use Hizech\Bliss\Email\EmailProvider\EmailStatus;
 
 class DummyEmail implements EmailProvider
 {
@@ -20,7 +19,7 @@ class DummyEmail implements EmailProvider
         EmailRecipients $to,
         string $subject,
         EmailBody $body
-    ): EmailStatus {
+    ): bool {
 
         // Ensure directory exists
         if (!is_dir($this->storage_dir)) {
@@ -60,7 +59,7 @@ class DummyEmail implements EmailProvider
 
         $result = file_put_contents($filepath, $content);
 
-        return $result !== false ? EmailStatus::Sent : EmailStatus::Error;
+        return $result !== false ? true : false;
     }
 
     private function formatAddress(EmailAddress $address): string

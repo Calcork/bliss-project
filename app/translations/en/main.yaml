@@ -1,173 +1,179 @@
-greeting: Hello
-farewell: Goodbye
-login.title: Sign In
-login.email: Email
-login.password: Password
-login.submit: Sign In
-login.register: Don't have an account? Register
-login.home: Back to home
-login.invalid_email: Invalid email.
-login.invalid_password: Invalid password.
-login.invalid_credentials: Invalid email or password.
-login.unverified_email: Please verify your email before signing in.
-login.registration_success: Check your email to verify your account.
-login.email_verified: Your email has been verified! You can now sign in.
-home.title: Bliss
-home.logo: Bliss
-home.login: Login
-home.logout: Logout
-home.admin_panel: Admin Panel
-home.register: Register
-home.hero_title: Bliss Framework
-home.hero_subtitle: A PHP web framework built on Symfony components.
-home.get_started: Get Started
-home.go_to_dashboard: Go to Dashboard
-home.feature_routing_title: Routing
-home.feature_routing_text: Regex-based HTTP routing with required, optional, and flag parameters.
-home.feature_cli_title: CLI
-home.feature_cli_text: Systemcall controllers for CLI commands with alias support.
-home.feature_orm_title: ORM
-home.feature_orm_text: Doctrine ORM integration with attribute-based entity mapping.
-home.footer: Built with Bliss Framework.
-register.title: Create Account
-register.name: Name
-register.email: Email
-register.password: Password
-register.submit: Register
-register.login: Already have an account? Sign in
-register.email_available: Available
-register.email_taken: Already taken
-register.checking: Checking...
-register.home: Back to home
-register.invalid_name: Invalid name.
-register.invalid_email: Invalid email.
-register.invalid_password: Invalid password.
-register.email_taken_error: This email is already taken.
-email.welcome.subject: Welcome to Bliss
-email.welcome.greeting: "Hello [[name]],"
-email.welcome.message: Welcome! Your account has been created.
-email.verification.subject: Verify your email
-email.verification.greeting: "Hello [[name]],"
-email.verification.message: Please verify your email address by clicking the button below.
-email.verification.button: Verify Email
-verify_email.invalid_token: This verification link is invalid or has expired.
-verify_email.already_verified: This email has already been verified.
-dashboard.title: Account Settings
-dashboard.name: Name
-dashboard.email: Email
-dashboard.current_password: Current Password
-dashboard.new_password: New Password
-dashboard.save: Save Changes
 dashboard.home: Home
-dashboard.logout: Logout
-dashboard.member_since: "Member since [[date]]"
-dashboard.email_verified: Email verified
-dashboard.email_not_verified: Email not verified
-dashboard.profile_section: Profile
-dashboard.password_section: Change Password
-dashboard.password_hint: Leave blank to keep your current password.
-dashboard.success: Your settings have been updated.
-dashboard.invalid_name: Invalid name.
-dashboard.invalid_email: Invalid email.
-dashboard.email_taken: This email is already taken.
-dashboard.invalid_current_password: Invalid current password.
-dashboard.wrong_current_password: Current password is incorrect.
-dashboard.invalid_new_password: Invalid new password.
-dashboard.nav.profile: Profile
-dashboard.nav.security: Security
-dashboard.nav.delete_account: Delete Account
-dashboard.delete_account.title: Delete Account
-dashboard.delete_account.heading: Delete Account
-dashboard.delete_account.description: Once you delete your account, all of your data will be permanently removed. This action cannot be undone.
-dashboard.delete_account.warning: This will permanently delete your account, profile, and all associated data. You will not be able to recover your account.
-dashboard.delete_account.password_label: Confirm your password
-dashboard.delete_account.submit: Delete My Account
-dashboard.delete_account.invalid_password: Invalid password.
-dashboard.delete_account.wrong_password: Password is incorrect.
 dashboard.security_description: Update your password to keep your account secure.
-dashboard.change_password_button: Change Password
-dashboard.password_changed: Your password has been changed.
-login.forgot_password: Forgot your password?
-forgot_password.title: Forgot Password
-forgot_password.email: Email
-forgot_password.submit: Send Reset Link
-forgot_password.success: If an account exists with that email, a password reset link has been sent.
-forgot_password.invalid_email: Invalid email.
-forgot_password.back_to_login: Back to Sign In
-reset_password.title: Reset Password
-reset_password.password: New Password
-reset_password.submit: Reset Password
-reset_password.invalid_token: This password reset link is invalid or has expired.
-reset_password.invalid_password: Invalid password.
-reset_password.success: Your password has been reset. You can now sign in.
-email.password_reset.subject: Reset your password
-email.password_reset.greeting: "Hello [[name]],"
-email.password_reset.message: You requested a password reset. Click the button below to set a new password. This link will expire in 1 hour.
-email.password_reset.button: Reset Password
-language.en: English
-language.he: עברית
-not_found.title: Page Not Found
-not_found.heading: Page Not Found
-not_found.message: The page you are looking for does not exist or has been moved.
-not_found.back_home: Back to Home
-admin.title: Admin Panel
-admin.panel_title: Admin Panel
-admin.home: Home
-admin.logout: Logout
-admin.welcome: Welcome to Admin Panel
-admin.welcome_description: Manage your application from here.
-admin.nav.dashboard: Dashboard
-admin.nav.users: Users
-admin.stats.total_users: Total Users
-admin.stats.verified_users: Verified
-admin.stats.admin_users: Admins
-admin.entity.users.title: Users - Admin
-admin.entity.users.heading: Users
-admin.entity.users.singular: User
-admin.entity.users.nav: Users
-admin.entity.users.edit: Edit User
-admin.entity.users.field.name: Name
-admin.entity.users.field.email: Email
-admin.entity.users.field.password: Password
-admin.entity.users.field.is_admin: Admin
-admin.entity.users.field.email_verified_at: Verified
-admin.entity.users.field.language: Language
-admin.entity.users.field.created_at: Joined
-admin.entity.site_settings.title: Site Settings - Admin
-admin.entity.site_settings.heading: Site Settings
-admin.entity.site_settings.singular: Site Settings
-admin.entity.site_settings.nav: Site Settings
-admin.entity.site_settings.edit: Edit Site Settings
-admin.entity.site_settings.field.site_name: Site Name
-admin.entity.site_settings.field.site_description: Site Description
-admin.entity.site_settings.field.contact_email: Contact Email
-admin.entity.site_settings.field.facebook_url: Facebook URL
-admin.entity.site_settings.field.twitter_url: Twitter URL
-admin.entity.site_settings.field.instagram_url: Instagram URL
-admin.entity.site_settings.field.maintenance_mode: Maintenance Mode
-admin.entity.site_settings.field.google_analytics_id: Google Analytics ID
-admin.entity.languages.title: Languages - Admin
-admin.entity.languages.heading: Languages
-admin.entity.languages.singular: Language
-admin.entity.languages.nav: Languages
-admin.entity.languages.edit: Edit Language
-admin.entity.languages.field.name: Name
-admin.entity.languages.field.locale: Locale
-admin.entity.actions.label: Actions
-admin.entity.actions.edit: Edit
-admin.entity.actions.delete: Delete
-admin.entity.actions.create: Create
+home.feature_cli_text: Systemcall controllers for CLI commands with alias support.
+register.email_available: Available
+greeting: Hello
+login.invalid_credentials: Invalid email or password.
+dashboard.email_verified: Email verified
 admin.entity.actions.save: Save
-admin.entity.actions.cancel: Cancel
-admin.entity.actions.confirm_delete: Are you sure you want to delete this record?
-admin.entity.messages.saved: Saved successfully.
-admin.entity.messages.deleted: Deleted successfully.
-admin.entity.messages.created: Created successfully.
+admin.entity.users.field.created_at: Joined
+dashboard.invalid_new_password: Invalid new password.
+admin.entity.actions.label: Actions
+home.register: Register
 admin.entity.messages.unique_violation: This value already exists.
+dashboard.change_password_button: Change Password
+dashboard.new_password: New Password
+admin.entity.users.field.is_admin: Admin
+dashboard.success: Your settings have been updated.
+language.en: English
+register.password: Password
+dashboard.invalid_current_password: Invalid current password.
+admin.entity.users.field.name: Name
+admin.entity.site_settings.field.instagram_url: Instagram URL
+dashboard.current_password: Current Password
+admin.entity.languages.field.name: Name
+dashboard.title: Account Settings
+reset_password.success: Your password has been reset. You can now sign in.
+verify_email.invalid_token: This verification link is invalid or has expired.
+admin.stats.admin_users: Admins
+admin.welcome: Welcome to Admin Panel
+register.home: Back to home
+admin.entity.languages.heading: Languages
+admin.entity.users.edit: Edit User
+verify_email.already_verified: This email has already been verified.
+not_found.back_home: Back to Home
+home.admin_panel: Admin Panel
 admin.entity.messages.delete_last_admin: Cannot remove admin role from the last admin.
+admin.title: Admin Panel
+home.feature_routing_text: Regex-based HTTP routing with required, optional, and flag
+  parameters.
+register.invalid_name: Invalid name.
+email.password_reset.message: You requested a password reset. Click the button below
+  to set a new password. This link will expire in 1 hour.
+reset_password.invalid_token: This password reset link is invalid or has expired.
+admin.entity.site_settings.edit: Edit Site Settings
+admin.entity.actions.cancel: Cancel
+admin.entity.site_settings.field.maintenance_mode: Maintenance Mode
+not_found.title: Page Not Found
+admin.entity.users.singular: User
+email.verification.button: Verify Email
+home.login: Login
+login.invalid_email: Invalid email.
+dashboard.delete_account.description: Once you delete your account, all of your data
+  will be permanently removed. This action cannot be undone.
+reset_password.password: New Password
+admin.entity.languages.nav: Languages
+dashboard.nav.profile: Profile
+email.verification.message: Please verify your email address by clicking the button
+  below.
+dashboard.email: Email
+dashboard.invalid_email: Invalid email.
+dashboard.delete_account.password_label: Confirm your password
+not_found.message: The page you are looking for does not exist or has been moved.
+admin.entity.actions.delete: Delete
+admin.entity.types.yes: 'true'
+admin.home: Home
+email.password_reset.greeting: Hello [[name]],
+dashboard.password_changed: Your password has been changed.
+forgot_password.back_to_login: Back to Sign In
+admin.entity.types.no: 'false'
+login.home: Back to home
+admin.entity.languages.singular: Language
+email.password_reset.subject: Reset your password
+admin.entity.site_settings.singular: Site Settings
+register.title: Create Account
+dashboard.delete_account.invalid_password: Invalid password.
+admin.entity.site_settings.heading: Site Settings
+register.checking: Checking...
+admin.entity.site_settings.field.site_name: Site Name
+admin.welcome_description: Manage your application from here.
+dashboard.nav.delete_account: Delete Account
+register.email_taken: Already taken
+reset_password.submit: Reset Password
+admin.entity.validation.invalid: '[[field]] is invalid.'
+admin.entity.users.heading: Users
+dashboard.member_since: Member since [[date]]
+admin.entity.users.title: Users - Admin
+dashboard.logout: Logout
+admin.entity.site_settings.field.site_description: Site Description
+admin.nav.users: Users
+forgot_password.email: Email
+reset_password.invalid_password: Invalid password.
+admin.entity.site_settings.field.twitter_url: Twitter URL
+admin.entity.actions.create: Create
+email.password_reset.button: Reset Password
+login.registration_success: Check your email to verify your account.
+login.invalid_password: Invalid password.
+forgot_password.success: If an account exists with that email, a password reset link
+  has been sent.
+register.name: Name
+email.verification.greeting: Hello [[name]],
+login.submit: Sign In
+admin.entity.languages.title: Languages - Admin
+admin.entity.users.field.email_verified_at: Verified
+login.password: Password
+register.submit: Register
+login.unverified_email: Please verify your email before signing in.
+register.invalid_email: Invalid email.
+dashboard.password_hint: Leave blank to keep your current password.
+admin.entity.messages.deleted: Deleted successfully.
+admin.entity.users.field.password: Password
+dashboard.save: Save Changes
+home.feature_orm_title: ORM
+reset_password.title: Reset Password
+login.forgot_password: Forgot your password?
+register.email_taken_error: This email is already taken.
+dashboard.name: Name
+email.verification.subject: Verify your email
+home.hero_title: Bliss Framework
+dashboard.delete_account.submit: Delete My Account
+admin.entity.messages.created: Created successfully.
+admin.entity.actions.confirm_delete: Are you sure you want to delete this record?
+admin.entity.actions.edit: Edit
+admin.entity.site_settings.field.facebook_url: Facebook URL
+login.title: Sign In
+admin.entity.validation.required: '[[field]] is required.'
+login.email: Email
+admin.nav.dashboard: Dashboard
+home.feature_orm_text: Doctrine ORM integration with attribute-based entity mapping.
+dashboard.email_taken: This email is already taken.
+login.email_verified: Your email has been verified! You can now sign in.
+forgot_password.submit: Send Reset Link
+dashboard.password_section: Change Password
+language.he: עברית
+admin.logout: Logout
+dashboard.nav.security: Security
+farewell: Goodbye
+email.welcome.subject: Welcome to Bliss
+dashboard.delete_account.title: Delete Account
+dashboard.invalid_name: Invalid name.
+home.title: Bliss
+home.go_to_dashboard: Go to Dashboard
+admin.entity.messages.saved: Saved successfully.
+dashboard.delete_account.heading: Delete Account
+register.invalid_password: Invalid password.
+admin.stats.verified_users: Verified
+home.feature_cli_title: CLI
+home.logout: Logout
+forgot_password.invalid_email: Invalid email.
+forgot_password.title: Forgot Password
+register.email: Email
+admin.entity.users.field.email: Email
+admin.entity.users.nav: Users
+home.logo: Bliss
+admin.entity.languages.edit: Edit Language
+login.register: Don't have an account? Register
+admin.panel_title: Admin Panel
+admin.entity.site_settings.field.contact_email: Contact Email
+register.login: Already have an account? Sign in
+admin.entity.users.field.language: Language
+email.welcome.message: Welcome! Your account has been created.
+home.get_started: Get Started
+dashboard.email_not_verified: Email not verified
+admin.stats.total_users: Total Users
+home.hero_subtitle: A PHP web framework built on Symfony components.
 admin.entity.messages.delete_in_use: Cannot delete this record because it is in use.
-admin.entity.validation.required: "[[field]] is required."
-admin.entity.validation.invalid: "[[field]] is invalid."
-admin.entity.types.yes: Yes
-admin.entity.types.no: No
 admin.entity.types.not_verified: Not Verified
+dashboard.wrong_current_password: Current password is incorrect.
+dashboard.delete_account.wrong_password: Password is incorrect.
+admin.entity.site_settings.field.google_analytics_id: Google Analytics ID
+admin.entity.languages.field.locale: Locale
+admin.entity.site_settings.title: Site Settings - Admin
+not_found.heading: Page Not Found
+dashboard.profile_section: Profile
+email.welcome.greeting: Hello [[name]],
+admin.entity.site_settings.nav: Site Settings
+home.feature_routing_title: Routing
+home.footer: Built with Bliss Framework.
+dashboard.delete_account.warning: This will permanently delete your account, profile,
+  and all associated data. You will not be able to recover your account.

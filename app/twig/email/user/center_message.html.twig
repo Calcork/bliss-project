@@ -1,0 +1,20 @@
+{% extends 'email/center_message.html.twig' %}
+
+{% block header_inner %}
+
+    {{ parent() }}
+    <div>{{ user_first_name }},</div>
+
+{% endblock %}
+
+{% block center_inner %}
+
+    {{ parent() }}
+
+{% endblock %}
+
+{% block footer_inner %}
+
+    {{ parent() }}
+
+{% endblock %}

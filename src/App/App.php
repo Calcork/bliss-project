@@ -5,7 +5,7 @@ namespace Hizech\Bliss\App;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\ORMSetup;
 use Hizech\Bliss\App\HookFulfillers\Http\OnAfterResponseDecided;
-use Hizech\Bliss\App\HookFulfillers\Http\OnContestContext;
+use Hizech\Bliss\App\HookFulfillers\Http\OnContestRequest;
 use Hizech\Bliss\App\HookFulfillers\Http\OnContestResponse;
 use Hizech\Bliss\App\HookFulfillers\Http\OnFound;
 use Hizech\Bliss\App\HookFulfillers\Http\OnNotFound;
@@ -426,7 +426,7 @@ abstract class App
         return $this->http_router;
     }
 
-    final public function getDoctrine() :  DoctrineWrapper
+    final public function getEntityManager() :  DoctrineWrapper
     {
 
         if ($this->doctrine === null) {
@@ -559,9 +559,9 @@ abstract class App
     }
 
     /**
-     * @return array<string, OnContestContext>
+     * @return array<string, OnContestRequest>
      */
-    protected function onHttpContestContextFulfillers() : array {
+    protected function onHttpContestRequestFulfillers() : array {
         return [];
     }
 
@@ -582,11 +582,11 @@ abstract class App
         }
 
         // Hook
-        foreach($this->onHttpContestContextFulfillers() as $name => $fulfiller) {
+        foreach($this->onHttpContestRequestFulfillers() as $name => $fulfiller) {
 
             $this->onBeforeFulfillerExecuted($name, $fulfiller);
 
-            $r = $fulfiller->onContestContext($request);
+            $r = $fulfiller->onContestRequest($request);
 
             if ($r instanceof Response) {
                 $r->send();

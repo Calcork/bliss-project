@@ -7,6 +7,6 @@ use Doctrine\Migrations\Tools\Console\ConsoleRunner;
 require_once __DIR__ . '/vendor/autoload.php';
 
 $app = new App();
-$factory = MigrationFactory::create($app->getDoctrine(), $app->getConfig()['migrations']);
+$factory = MigrationFactory::create($app->getEntityManager(), $app->getConfig()['migrations']);
 
 ConsoleRunner::run([], $factory);

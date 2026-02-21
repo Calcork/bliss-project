@@ -3,82 +3,83 @@
 namespace App\AppCode\Actions;
 
 use App\Base\App;
+use App\Models\GeneralSetting;
+use App\Models\User;
 use Hizech\Bliss\Email\Data\EmailAddress\EmailAddress;
 use Hizech\Bliss\Email\Data\EmailBody\EmailBody;
 use Hizech\Bliss\Email\Data\EmailBody\EmailBodyType;
 use Hizech\Bliss\Email\Data\EmailRecipients\EmailRecipients;
-use Hizech\Bliss\Email\EmailProvider\EmailStatus;
 
 class Email
 {
 
     function __construct(private App $app) {}
 
+   private function getAutosystemAddress(): EmailAddress {
+
+       $settings = $this->app->getEntityManager()->find(GeneralSetting::class, GeneralSetting::getSingletonId());
+       return new EmailAddress($settings->getAutosystemEmail(), $settings->getSiteName());
+
+   }
+
     /**
-     * @param array<string, string> $context
+     * @param array<int, int> $user_ids
+     * @return EmailRecipients
      */
-    private function sendHtmlEmail(string $template, array $context, string $user_email, string $user_name): EmailStatus
-    {
-        $from = new EmailAddress($this->app->getEnv()['EMAIL_FROM'], 'Bliss');
-        $to = new EmailRecipients(new EmailAddress($user_email, $user_name));
-        $subject = $context['subject'];
+   private function getUsersEmailRecipient(array $user_ids) : EmailRecipients {
 
-        $html = $this->app->getTemplateMaster()->twigCustomRender($template, $context);
-        $body = new EmailBody(EmailBodyType::Html, $html);
+       $recipients_addresses = [];
 
-        return $this->app->getEmailProvider()->sendEmail($from, $to, $subject, $body);
-    }
+        foreach($user_ids as $user_id) {
 
-    function sendWelcome(string $user_email, string $user_name): EmailStatus
-    {
-        $translator = $this->app->getTranslator();
+            $em = $this->app->getEntityManager();
+            $user = $em->find(User::class, $user_id);
 
-        return $this->sendHtmlEmail('emails/welcome.twig', [
-            'subject' => $translator->trans('main.email.welcome.subject', [], 'en'),
-            'greeting' => $translator->trans('main.email.welcome.greeting', ['name' => $user_name], 'en'),
-            'message' => $translator->trans('main.email.welcome.message', [], 'en'),
-        ], $user_email, $user_name);
-    }
 
-    function sendVerification(string $user_email, string $user_name, string $verification_url): EmailStatus
-    {
-        $translator = $this->app->getTranslator();
+            $recipients_addresses[] = new EmailAddress($user->getEmail(), $user->getFirstName() . ' ' . $user->getLastName());
 
-        return $this->sendHtmlEmail('emails/verification.twig', [
-            'subject' => $translator->trans('main.email.verification.subject', [], 'en'),
-            'greeting' => $translator->trans('main.email.verification.greeting', ['name' => $user_name], 'en'),
-            'message' => $translator->trans('main.email.verification.message', [], 'en'),
-            'button' => $translator->trans('main.email.verification.button', [], 'en'),
-            'url' => $verification_url,
-        ], $user_email, $user_name);
-    }
+        }
 
-    function sendPasswordReset(string $user_email, string $user_name, string $reset_url): EmailStatus
-    {
-        $translator = $this->app->getTranslator();
+        return new EmailRecipients($recipients_addresses);
 
-        return $this->sendHtmlEmail('emails/password-reset.twig', [
-            'subject' => $translator->trans('main.email.password_reset.subject', [], 'en'),
-            'greeting' => $translator->trans('main.email.password_reset.greeting', ['name' => $user_name], 'en'),
-            'message' => $translator->trans('main.email.password_reset.message', [], 'en'),
-            'button' => $translator->trans('main.email.password_reset.button', [], 'en'),
-            'url' => $reset_url,
-        ], $user_email, $user_name);
-    }
+   }
 
-    function send(int $user_id, string $message): void
-    {
-        // TODO: Implement email sending
-    }
+   private function getCenterMessageBody(string $center_message, ?int $user_id = null) : EmailBody {
 
-    function revoke(int $email_id): void
-    {
-        // TODO: Implement email revocation
-    }
+       $context = [
+           'site_name' => $this->app->getEntityManager()->find(GeneralSetting::class, GeneralSetting::getSingletonId())->getAutosystemEmail()
+       ];
 
-    function removeFromNewsletter(int $user_id): void
-    {
-        // TODO: Implement newsletter removal
-    }
+       if(isset($user_id)) {
+
+           $em = $this->app->getEntityManager();
+           $user = $em->find(User::class, $user_id);
+
+           $context['user_first_name'] = $user->getFirstName();
+
+           $path = 'email/user/center_message.html.twig';
+
+       }
+
+       else {
+           $path = 'email/center_message.html.twig';
+       }
+
+       $twig = $this->app->getTemplateMaster()->twigCustomRender($path, $context);
+
+       $body = new EmailBody(EmailBodyType::Html, $twig);
+       return $body;
+
+   }
+
+   function sendUserEmail(string $subject, string $center_message, int $user_id) : void {
+
+       $body = $this->getCenterMessageBody($center_message, $user_id);
+       $from = $this->getAutosystemAddress();
+       $recipients = $this->getUsersEmailRecipient([$user_id]);
+
+       $this->app->getEmailProvider()->sendEmail($from, $recipients, $subject, $body);
+
+   }
 
 }

@@ -17,7 +17,7 @@ class Migrations extends SystemCall
         /** @var array<string, mixed> $config */
         $config = $this->app->getConfig()['migrations'];
 
-        return MigrationFactory::create($this->app->getDoctrine(), $config);
+        return MigrationFactory::create($this->app->getEntityManager(), $config);
     }
 
     /** @param string[] $arguments */

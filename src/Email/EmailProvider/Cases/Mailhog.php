@@ -7,7 +7,6 @@ use Hizech\Bliss\Email\Data\EmailBody\EmailBody;
 use Hizech\Bliss\Email\Data\EmailBody\EmailBodyType;
 use Hizech\Bliss\Email\Data\EmailRecipients\EmailRecipients;
 use Hizech\Bliss\Email\EmailProvider\EmailProvider;
-use Hizech\Bliss\Email\EmailProvider\EmailStatus;
 use ErrorException;
 
 class Mailhog implements EmailProvider
@@ -55,7 +54,7 @@ class Mailhog implements EmailProvider
         EmailRecipients $to,
         string $subject,
         EmailBody $body
-    ): EmailStatus {
+    ): bool {
 
         $socket = null;
 
@@ -123,7 +122,7 @@ class Mailhog implements EmailProvider
         $this->write($socket, 'QUIT', [221]);
         fclose($socket);
 
-        return EmailStatus::Sent;
+        return true;
 
     }
 

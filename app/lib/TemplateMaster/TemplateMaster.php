@@ -108,7 +108,7 @@ class TemplateMaster implements \App\Base\Services\TemplateMaster
     /**
      * @param array<string, mixed> $context
      */
-    public function twigCustomRender(string $path, array $context): string
+    public function twigCustomRender(string $path, array $context = []): string
     {
         return $this->twig->render($path, $context);
     }
